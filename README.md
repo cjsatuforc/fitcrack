@@ -89,10 +89,24 @@ mysql> GRANT ALL PRIVILEGES ON fitcrack.* TO 'fitcrack'@'localhost' IDENTIFIED B
 
 ## Step-by-step: Install on CentOS/RHEL 7
 
+### SELINUX
+The following tutorial assumes **SELINUX** is disabled.
+If you wish to use SELINUX on Fitcrack server machine, you have to configure policies manually, or wait for an udpate of the tutorial.
+
+### Add MariaDB 10 repository
+Create file `/etc/yum.repos.d/MariaDB.repo` with the following contents:
+```
+name = MariaDB 
+baseurl = http://yum.mariadb.org/10.1/centos7-amd64 
+gpgkey = https://yum.mariadb.org/RPM-GPG-KEY-MariaDB 
+gpgcheck = 1
+```
+
 ### Install prerequisities
 ```
-yum install centos-release-scl devtoolset-6-gcc* m4 libtool autoconf automake  git vim httpd php php-mysql mod_wsgi mariadb-server mariadb-devel zlib libcurl-devel openssl-libs python rh-python36 rh-python36-mod_wsgi MySQL-python python2-PyMySQL rh-python36-python-PyMySQL boost* pkgconfig libnotify
+yum install centos-release-scl devtoolset-6-gcc* m4 libtool autoconf automake  git vim httpd php php-mysql mod_wsgi mariadb-server mariadb-devel zlib libcurl-devel openssl-libs python rh-python36 rh-python36-mod_wsgi rh-python36-setuptools MySQL-python python2-PyMySQL rh-python36-python-PyMySQL boost* pkgconfig libnotify
 
+easy_install-3.6 pip
 systemctl start httpd.service
 systemctl enable httpd.service
 systemctl start mariadb
