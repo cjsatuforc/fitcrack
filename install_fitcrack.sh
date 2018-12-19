@@ -82,7 +82,7 @@ if [ -f "tmp/libs" ]; then
   read -e -p "2) BOINC libraries seem to be installed. Reinstall? [y/N] (default: N): " INSTALL_LIBS
   INSTALL_LIBS=${INSTALL_LIBS:-N}
 else
-  read -e -p "2) Install BOINC libraries [y/N] (default: y): " BUILD_SERVER
+  read -e -p "2) Install BOINC libraries [y/N] (default: y): " INSTALL_LIBS
   BUILD_SERVER=${BUILD_SERVER:-y}
 fi
 
@@ -97,7 +97,7 @@ if [ -d "$BOINC_PROJECT_DIR" ]; then
   read -e -p "3) Fitcrack project seems to be installed already. Reinstall? [y/N] (default: N): " INSTALL_PROJECT
   INSTALL_PROJECT=${INSTALL_PROJECT:-N}
 else
-  read -e -p "3) Install Fitcrack project? [y/N] (default: y): " INSTALL_SERVER
+  read -e -p "3) Install Fitcrack project? [y/N] (default: y): " INSTALL_PROJECT
   INSTALL_PROJECT=${INSTALL_PROJECT:-y}
 fi
 
