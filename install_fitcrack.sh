@@ -83,7 +83,7 @@ if [ -f "tmp/libs" ]; then
   INSTALL_LIBS=${INSTALL_LIBS:-N}
 else
   read -e -p "2) Install BOINC libraries [y/N] (default: y): " INSTALL_LIBS
-  BUILD_SERVER=${INSTALL_LIBS:-y}
+  INSTALL_LIBS=${INSTALL_LIBS:-y}
 fi
 
 if [ $INSTALL_LIBS = "y" ]; then
