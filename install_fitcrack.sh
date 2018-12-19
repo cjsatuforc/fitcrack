@@ -97,7 +97,7 @@ if [ -d "$BOINC_PROJECT_DIR" ]; then
   read -e -p "3) Fitcrack project seems to be installed already. Reinstall? [y/N] (default: N): " INSTALL_PROJECT
   INSTALL_PROJECT=${INSTALL_PROJECT:-N}
 else
-  read -e -p "3) Install Fitcrack project? [y/N] (default: y): " INSTALL_SERVER
+  read -e -p "3) Install Fitcrack project? [y/N] (default: y): " INSTALL_PROJECT
   INSTALL_PROJECT=${INSTALL_PROJECT:-y}
 fi
 
