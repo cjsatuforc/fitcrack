@@ -14,7 +14,7 @@
 * MySQL (4.0.9+) or MariaDB (10.0+)
 * libnotify-dev
 * Apache with the following modules:
-  * PHP (5+)
+  * PHP (5+) with XML and MySQL modules
   * CGI
   * WSGI
   * rewrite
@@ -64,7 +64,7 @@ boincadm@myserver:~/projects/fitcrack$ ./bin/stop
 
 ### Install prerequisities
 ```
-sudo apt-get install m4 make dh-autoreconf pkg-config git vim apache2 libapache2-mod-php mysql-server mysql-common libmysqlclient-dev zlibc zlib1g zlib1g-dev php php-mysql php-cli php-gd python python python3 python-mysqldb python3-pymysql python3-pip libapache2-mod-wsgi-py3 libssl-dev libcurl4-openssl-dev apache2-utils libboost1.62-all-dev pkg-config libnotify-dev
+sudo apt-get install m4 make dh-autoreconf pkg-config git vim apache2 libapache2-mod-php mysql-server mysql-common libmysqlclient-dev zlibc zlib1g zlib1g-dev php php-xml php-mysql php-cli php-gd python python python3 python-mysqldb python3-pymysql python3-pip libapache2-mod-wsgi-py3 libssl-dev libcurl4-openssl-dev apache2-utils libboost1.62-all-dev pkg-config libnotify-dev
 
 mysql_secure_installation # Set MySQL root password
 

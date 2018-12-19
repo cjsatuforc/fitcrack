@@ -86,9 +86,25 @@ if [ $FRONTEND_PORT_FREE = "N" ]; then
 else
   echo "Creating front-end config: $APACHE_CONFIG_DIR/sites-available/fitcrackFE.conf"
 
+  ADD_LISTEN_DIRECTIVE="y"
+  cat $APACHE_CONFIG_FILE | grep "^Listen $FRONTEND_PORT" >/dev/null
+  if [[ $? = 0 ]]; then
+    ADD_LISTEN_DIRECTIVE="N"
+  fi
+  if [ -f $APACHE_CONFIG_DIR/ports.conf ]; then
+    cat $APACHE_CONFIG_DIR/ports.conf | grep "^Listen $FRONTEND_PORT" >/dev/null
+    if [[ $? = 0 ]]; then
+      ADD_LISTEN_DIRECTIVE="N"
+    fi
+  fi
+
   FE_CONFIG_FILE=$APACHE_CONFIG_DIR/sites-available/fitcrackFE.conf
   echo "# Fitcrack WebAdmin front-end config" > $FE_CONFIG_FILE
-  echo "Listen $FRONTEND_PORT" >> $FE_CONFIG_FILE
+
+  if [ $ADD_LISTEN_DIRECTIVE = "y" ]; then
+    echo "Listen $FRONTEND_PORT" >> $FE_CONFIG_FILE
+  fi
+
   echo "<VirtualHost *:$FRONTEND_PORT>" >> $FE_CONFIG_FILE
   echo "  DocumentRoot $APACHE_DOCUMENT_ROOT/fitcrackFE" >> $FE_CONFIG_FILE
   echo "  <Directory $APACHE_DOCUMENT_ROOT/fitcrackFE/>" >> $FE_CONFIG_FILE
@@ -139,9 +155,25 @@ if [ $BACKEND_PORT_FREE = "N" ]; then
 else
   echo "Creating back-end config: $APACHE_CONFIG_DIR/sites-available/fitcrackAPI.conf"
 
+  ADD_LISTEN_DIRECTIVE="y"
+  cat $APACHE_CONFIG_FILE | grep "^Listen $BACKEND_PORT" >/dev/null
+  if [[ $? = 0 ]]; then
+    ADD_LISTEN_DIRECTIVE="N"
+  fi
+  if [ -f $APACHE_CONFIG_DIR/ports.conf ]; then
+    cat $APACHE_CONFIG_DIR/ports.conf | grep "^Listen $BACKEND_PORT" >/dev/null
+    if [[ $? = 0 ]]; then
+      ADD_LISTEN_DIRECTIVE="N"
+    fi
+  fi
+
   BE_CONFIG_FILE=$APACHE_CONFIG_DIR/sites-available/fitcrackAPI.conf
   echo "# Fitcrack WebAdmin back-end config" > $BE_CONFIG_FILE
-  echo "Listen $BACKEND_PORT" >> $BE_CONFIG_FILE
+
+  if [ $ADD_LISTEN_DIRECTIVE = "y" ]; then
+    echo "Listen $BACKEND_PORT" >> $BE_CONFIG_FILE
+  fi
+
   echo "<VirtualHost *:$BACKEND_PORT>" >> $BE_CONFIG_FILE
   echo "  WSGIDaemonProcess fitcrack user=$APACHE_USER group=$APACHE_USER threads=5" >> $BE_CONFIG_FILE
   echo "  WSGIScriptAlias / $APACHE_DOCUMENT_ROOT/fitcrackAPI/src/wsgi.py" >> $BE_CONFIG_FILE
