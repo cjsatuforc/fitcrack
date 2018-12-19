@@ -91,7 +91,7 @@ mysql> GRANT ALL PRIVILEGES ON fitcrack.* TO 'fitcrack'@'localhost' IDENTIFIED B
 
 ### Install prerequisities
 ```
-yum install centos-release-scl devtoolset-6-gcc* m4 libtool autoconf automake  git vim httpd php php-mysql mod_wsgi mariadb-server mariadb-devel zlib libcurl-devel openssl-libs python rh-python36 rh-python36-mod_wsgi python2-PyMySQL rh-python36-python-PyMySQL boost* pkgconfig libnotify
+yum install centos-release-scl devtoolset-6-gcc* m4 libtool autoconf automake  git vim httpd php php-mysql mod_wsgi mariadb-server mariadb-devel zlib libcurl-devel openssl-libs python rh-python36 rh-python36-mod_wsgi MySQL-python python2-PyMySQL rh-python36-python-PyMySQL boost* pkgconfig libnotify
 
 systemctl start httpd.service
 systemctl enable httpd.service

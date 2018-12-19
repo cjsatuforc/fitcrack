@@ -12,27 +12,27 @@ fi
 
 # Create collections subdirs
 if ! [ -d "/usr/share/collections/charsets" ]; then
-  mkdir /usr/share/collections/charsets
+  cp -R collections/charsets /usr/share/collections/
 fi
 
 if ! [ -d "/usr/share/collections/dictionaries" ]; then
-  mkdir /usr/share/collections/dictionaries
+  cp -R collections/dictionaries /usr/share/collections/
 fi
 
 if ! [ -d "/usr/share/collections/markov" ]; then
-  mkdir /usr/share/collections/markov
+  cp -R collections/markov /usr/share/collections/
 fi
 
 if ! [ -d "/usr/share/collections/encrypted-files" ]; then
-  mkdir /usr/share/collections/encrypted-files
+  cp -R collections/encrypted-files /usr/share/collections/
 fi
 
 if ! [ -d "/usr/share/collections/masks" ]; then
-  mkdir /usr/share/collections/masks
+  cp -R collections/masks /usr/share/collections/
 fi
 
 if ! [ -d "/usr/share/collections/rules" ]; then
-  mkdir /usr/share/collections/rules
+  cp -R collections/rules /usr/share/collections/
 fi
 
 # Set ownership and permissions

@@ -63,6 +63,7 @@ cd $MYDIR
 # !!! IMPORTANT !!! #
 #####################
 # Set permissions for BOINC user and BOINC group
+chmod -R g+rwx $BOINC_HOME
 chown -R $BOINC_USER:$BOINC_GROUP $BOINC_HOME/projects
 
 #######################################
