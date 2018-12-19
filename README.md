@@ -1,6 +1,6 @@
 # Fitcrack (Distributed password cracking system)
 
-# Software prerequisities
+## Software prerequisities
 * make (3.79+)
 * m4 (1.4+)
 * libtool (1.5+)
@@ -30,7 +30,7 @@ Create a MySQL database and user account for Fitcrack
 ```
 mysql -u root -p
 mysql> create database fitcrack;
-mysql> GRANT ALL PRIVILES ON fitcrack.* TO 'fitcrack'@'localhost' IDENTIFIED BY 'mypassword';
+mysql> GRANT ALL PRIVILEGES ON fitcrack.* TO 'fitcrack'@'localhost' IDENTIFIED BY 'mypassword';
 ```
 As root, use Fitcrack installer:
 ```
@@ -45,22 +45,20 @@ Login to the server as BOINC user (e.g. `boincadm`) and enter the project direct
 boincadm@myserver:~$ cd projects/fitcrack
 ```
 
-You can get the current server status by typing:
+### Get server status
 ```
 boincadm@myserver:~/projects/fitcrack$ ./bin/status
 ```
 
-To start the server type:
+### Start Fitcrack server
+```
+boincadm@myserver:~/projects/fitcrack$ ./bin/start
+```
+
+### Stop Fitcrack server
 ```
 boincadm@myserver:~/projects/fitcrack$ ./bin/stop
 ```
-
-To stop the server type:
-```
-boincadm@myserver:~/projects/fitcrack$ ./bin/stop
-```
-
-
 
 ## Step-by-step: Install on Debian 9 / Ubuntu 18.04 LTS
 
