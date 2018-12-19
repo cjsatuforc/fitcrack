@@ -71,14 +71,14 @@ mysql_secure_installation # Set MySQL root password
 a2enmod cgi       # enable mod CGI
 a2enmod rewrite   # enable mod rewrite
 a2enmod wsgi      # enable mod wsgi
-systemctl apache2 restart
+systemctl restart apache2
 ```
 ### Setup user and Database
 ```
 useradd -m -c "BOINC Administrator" boincadm  -s /bin/bash
 mysql -u root -p
 mysql> create database fitcrack;
-mysql> GRANT ALL PRIVILES ON fitcrack.* TO 'fitcrack'@'localhost' IDENTIFIED BY 'mypassword';
+mysql> GRANT ALL PRIVILEGES ON fitcrack.* TO 'fitcrack'@'localhost' IDENTIFIED BY 'mypassword';
 ```
 
 ### Install Fitcrack

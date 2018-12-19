@@ -8,7 +8,6 @@ echo "Creating directories for common collections..."
 # Create collections dir (if not exists)
 if ! [ -d "/usr/share/collections" ]; then
   mkdir /usr/share/collections
-  exit
 fi
 
 # Create collections subdirs
