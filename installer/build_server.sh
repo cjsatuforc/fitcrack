@@ -21,8 +21,13 @@ rm -f tmp/built 2>/dev/null
 cd boinc
 chmod +x _autosetup
 chmod +x configure
-./_autosetup
 
+
+if [ -f /opt/rh/devtoolset-7/enable ]; then
+  . /opt/rh/devtoolset-7/enable
+fi
+
+./_autosetup
 if [[ $? != 0 ]]; then
   echo "Error during autoconfiguration."
   exit

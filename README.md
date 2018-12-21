@@ -62,6 +62,8 @@ boincadm@myserver:~/projects/fitcrack$ ./bin/stop
 
 ## Step-by-step: Install on Debian 9 / Ubuntu 18.04 LTS
 
+Please note that the following commands have to be run as **root**.
+
 ### Install prerequisities
 ```
 sudo apt-get install m4 make dh-autoreconf pkg-config git vim apache2 libapache2-mod-php mysql-server mysql-common libmysqlclient-dev zlibc zlib1g zlib1g-dev php php-xml php-mysql php-cli php-gd python python python3 python-mysqldb python3-pymysql python3-pip libapache2-mod-wsgi-py3 libssl-dev libcurl4-openssl-dev apache2-utils libboost1.62-all-dev pkg-config libnotify-dev
@@ -89,6 +91,8 @@ mysql> GRANT ALL PRIVILEGES ON fitcrack.* TO 'fitcrack'@'localhost' IDENTIFIED B
 
 ## Step-by-step: Install on CentOS/RHEL 7
 
+Please note that the following commands have to be run as **root**.
+
 ### SELINUX
 The following tutorial assumes **SELINUX** is disabled.
 If you wish to use SELINUX on Fitcrack server machine, you have to configure policies manually, or wait for an udpate of the tutorial.
@@ -96,16 +100,28 @@ If you wish to use SELINUX on Fitcrack server machine, you have to configure pol
 ### Add MariaDB 10 repository
 Create file `/etc/yum.repos.d/MariaDB.repo` with the following contents:
 ```
-name = MariaDB 
-baseurl = http://yum.mariadb.org/10.1/centos7-amd64 
-gpgkey = https://yum.mariadb.org/RPM-GPG-KEY-MariaDB 
+name = MariaDB
+baseurl = http://yum.mariadb.org/10.1/centos7-amd64
+gpgkey = https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
 gpgcheck = 1
 ```
 
 ### Install prerequisities
+Enable IUS repository (for Python3.6 version od mod_wsgi)
 ```
-yum install centos-release-scl devtoolset-6-gcc* m4 libtool autoconf automake  git vim httpd php php-mysql mod_wsgi mariadb-server mariadb-devel zlib libcurl-devel openssl-libs python rh-python36 rh-python36-mod_wsgi rh-python36-setuptools MySQL-python python2-PyMySQL rh-python36-python-PyMySQL boost* pkgconfig libnotify
+yum install -y https://$(rpm -E '%{?centos:centos}%{!?centos:rhel}%{rhel}').iuscommunity.org/ius-release.rpm
+```
 
+```
+yum instal -y epel-release centos-release-scl
+yum install -y devtoolset-7 m4 libtool autoconf automake  git vim httpd php php-mysql mod_wsgi mariadb-server mariadb-devel zlib libcurl-devel openssl-libs python python36 python36u-mod_wsgi python36u-setuptools  MySQL-python python2-PyMySQL  boost* pkgconfig libnotify
+```
+Set Python 3.6 as default Python3 version:
+```
+alternatives --install /usr/bin/python3 python3 /usr/bin/python3.6 60
+```
+
+```
 easy_install-3.6 pip
 systemctl start httpd.service
 systemctl enable httpd.service
@@ -124,7 +140,7 @@ mysql> GRANT ALL PRIVILES ON fitcrack.* TO 'fitcrack'@'localhost' IDENTIFIED BY 
 
 ### Switch to GCC6 and Install Fitcrack
 ```
-scl enable devtoolset-6 bash
+scl enable devtoolset-7 bash
 ./install_fitcrack.sh
 ```
 
