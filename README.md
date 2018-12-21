@@ -62,11 +62,11 @@ boincadm@myserver:~/projects/fitcrack$ ./bin/stop
 
 ## Step-by-step: Install on Debian 9 / Ubuntu 18.04 LTS
 
-Please note that the following commands have to be run as **root**.
+Open a **root** terminal, go to the directory with Fitcrack sources and proceed as follows.
 
 ### Install prerequisities
 ```
-sudo apt-get install m4 make dh-autoreconf pkg-config git vim apache2 libapache2-mod-php mysql-server mysql-common libmysqlclient-dev zlibc zlib1g zlib1g-dev php php-xml php-mysql php-cli php-gd python python python3 python-mysqldb python3-pymysql python3-pip libapache2-mod-wsgi-py3 libssl-dev libcurl4-openssl-dev apache2-utils libboost1.62-all-dev pkg-config libnotify-dev
+apt-get install m4 make dh-autoreconf pkg-config git vim apache2 libapache2-mod-php mysql-server mysql-common libmysqlclient-dev zlibc zlib1g zlib1g-dev php php-xml php-mysql php-cli php-gd python python python3 python-mysqldb python3-pymysql python3-pip libapache2-mod-wsgi-py3 libssl-dev libcurl4-openssl-dev apache2-utils libboost1.62-all-dev pkg-config libnotify-dev
 
 mysql_secure_installation # Set MySQL root password
 
@@ -91,7 +91,7 @@ mysql> GRANT ALL PRIVILEGES ON fitcrack.* TO 'fitcrack'@'localhost' IDENTIFIED B
 
 ## Step-by-step: Install on CentOS/RHEL 7
 
-Please note that the following commands have to be run as **root**.
+Open a **root** terminal, go to the directory with Fitcrack sources and proceed as follows.
 
 ### SELINUX
 The following tutorial assumes **SELINUX** is disabled.
@@ -107,13 +107,14 @@ gpgcheck = 1
 ```
 
 ### Install prerequisities
-Enable IUS repository (for Python3.6 version od mod_wsgi)
+Enable IUS, EPEL, and IUS repositories
 ```
 yum install -y https://$(rpm -E '%{?centos:centos}%{!?centos:rhel}%{rhel}').iuscommunity.org/ius-release.rpm
+yum instal -y epel-release centos-release-scl
 ```
 
+Install necessary packages:
 ```
-yum instal -y epel-release centos-release-scl
 yum install -y devtoolset-7 m4 libtool autoconf automake  git vim httpd php php-mysql mod_wsgi mariadb-server mariadb-devel zlib libcurl-devel openssl-libs python python36 python36u-mod_wsgi python36u-setuptools  MySQL-python python2-PyMySQL  boost* pkgconfig libnotify
 ```
 Set Python 3.6 as default Python3 version:
