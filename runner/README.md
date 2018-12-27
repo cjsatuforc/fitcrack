@@ -26,7 +26,6 @@ The files are:
 * optional files:
   * dict[1-2] - files with the dictionary of passwords saved in them, in
     **hashcat** acceptable format  
-  * charset[1-4] - files with custom **hashcat** charsets
 
 * output files:
   * out - this output file where **Runner** saves the **hashcat** results in the
@@ -68,7 +67,7 @@ errors or driver incompatibilities.
 ##### Attack subtypes 
 * attack\_mode = 0 (Straight) 
    * 0 - Basic dictionary attack (name of the dictionary is in th field **dict1**)
-   * 1 - Dictionary attack with rules (name of the file with rules is stored in the field **rules**)
+   * 1 - Dictionary attack with rules (name of the file with rules is **rules**)
 * attack\_mode = 1 (Combination)  
    * 0 - Basic combinator attack (passwords are created by combination of dictionaries **dict1** and **dict2**)
    * 1 - Combinator attack with rule for modification of left dictionary (rule is in the field **rule_left**)
@@ -76,8 +75,8 @@ errors or driver incompatibilities.
    * 3 - Combinator attakc with rules for both dictionaries (**rule_left**, **rule_right**)
 * attack\_mode = 3 (Brute-force with mask)  
   * 0 - Basic brute-force with mask a default (**hashcat.hcstat**) file
-  * 1 - Brute-force with basic 2D hcstat file (name of the hcstat file is in the field **markov**)
-  * 2 - Brute-force with 3D hcstat file (name of the hcstat file is in the field **markov**)
+  * 1 - Brute-force with basic 2D hcstat file (name of the hcstat file is **markov**)
+  * 2 - Brute-force with 3D hcstat file (name of the hcstat file is **markov**)
 
 | **Name of the field** |**Data type**| **Description**								    | **Hashcat argument** |
 |-----------------------|-------------|-----------------------------------------------------------------------------|----------------------|
@@ -85,10 +84,10 @@ errors or driver incompatibilities.
 |attack_submode         |UInt         | Attack mode submode	 			    			    |		      	   |
 |hash_type              |UInt         | Hashcat hash type					    		    | -m              	   |
 |name                   |String       | Name of the task					    		    |                 	   |                
-|charset1	        |String       | Name of the charset file				    		    | -1	      	   |
-|charset2	        |String       | Name of the charset file   			    			    | -2 	      	   |
-|charset3	        |String       | Name of the charset file   			    			    | -3 	      	   |
-|charset4               |String       | Name of the charset file   			    			    | -4 	      	   |
+|charset1	        |String       | String containing HEX encoded custom charset				    		    | -1	      	   |
+|charset2	        |String       | String containing HEX encoded custom charset   			    			    | -2 	      	   |
+|charset3	        |String       | String containing HEX encoded custom charset   			    			    | -3 	      	   |
+|charset4               |String       | String containing HEX encoded custom charset   			    			    | -4 	      	   |
 |rule_left              |String       | Rule for the left dictionary  			    			    | -j	      	   |
 |rule_right             |String       | Rule for the right dictionary 			    			    | -k	      	   |
 |mask	                |String       | Hashcat mask					    			    |   	      	   |
@@ -97,8 +96,6 @@ errors or driver incompatibilities.
 |mask_hc_keyspace       |BigUInt      | Hashcat keyspace of the mask			    			    |   	      	   |
 |dict_hc_keyspace       |BigUInt      | Hashcat keyspace of the dictionary		    			    |   	      	   |
 |mode                   |String       | Type of the task benchmark, normal(cracking), benchmark-all (b, n, a)	    | --benchmark     	   |
-|rule		        |String       | Name of the rule file					    		    | --rules_file    	   |
-|markov		        |String       | Name of the hcstat file					    		    | --markov-hcstat	   |
 |markov_threshold	|UInt	      | Threshold value for markov chains					    |			   |
 
 ##### Example of TLV config 
