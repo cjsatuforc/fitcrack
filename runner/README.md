@@ -94,7 +94,6 @@ errors or driver incompatibilities.
 |start_index            |BigUInt      | Computation start index				    			    | --skip	      	   |
 |hc_keyspace            |BigUInt      | Amount of hashes to compute			    			    | --limit         	   |
 |mask_hc_keyspace       |BigUInt      | Hashcat keyspace of the mask			    			    |   	      	   |
-|dict_hc_keyspace       |BigUInt      | Hashcat keyspace of the dictionary		    			    |   	      	   |
 |mode                   |String       | Type of the task benchmark, normal(cracking), benchmark-all (b, n, a)	    | --benchmark     	   |
 |markov_threshold	|UInt	      | Threshold value for markov chains					    |			   |
 
