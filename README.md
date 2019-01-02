@@ -100,6 +100,7 @@ If you wish to use SELINUX on Fitcrack server machine, you have to configure pol
 ### Add MariaDB 10 repository
 Create file `/etc/yum.repos.d/MariaDB.repo` with the following contents:
 ```
+[mariadb]
 name = MariaDB
 baseurl = http://yum.mariadb.org/10.1/centos7-amd64
 gpgkey = https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
@@ -110,7 +111,7 @@ gpgcheck = 1
 Enable IUS, EPEL, and IUS repositories
 ```
 yum install -y https://$(rpm -E '%{?centos:centos}%{!?centos:rhel}%{rhel}').iuscommunity.org/ius-release.rpm
-yum instal -y epel-release centos-release-scl
+yum install -y epel-release centos-release-scl
 ```
 
 Install necessary packages:
