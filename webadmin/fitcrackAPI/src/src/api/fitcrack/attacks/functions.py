@@ -36,12 +36,18 @@ def check_mask_syntax(mask):
         abort(400, 'Wrong mask ' + mask)
 
 
-def compute_keyspace_from_mask(mask):
+def compute_keyspace_from_mask(mask, charsetsSize=[]):
     keyspace = 1
     nextCharSymbol = False
     for char in mask:
         if nextCharSymbol:
             multiplier = keyspace_dict.get(char, None)
+            try:
+                if int(char) >= 1 and int(char) <= 4:
+                    multiplier = charsetsSize.get(int(char), None)
+            except ValueError:
+                pass
+
             if not multiplier:
                 continue
             keyspace *= multiplier

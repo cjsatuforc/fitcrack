@@ -15,7 +15,7 @@ from src.api.fitcrack.attacks.functions import make_dict_from_mask, check_mask_s
 from src.api.fitcrack.functions import shellExec
 from src.database import db
 # process brute force package
-from src.database.models import FcMask, FcDictionary, FcRule, FcHcstat, FcCharset, FcPackageDictionary
+from src.database.models import FcMask, FcDictionary, FcRule, FcHcstat, FcCharset, FcJobDictionary
 
 
 # dictionary attack
@@ -54,7 +54,7 @@ def process_package_0(package):
 
 def post_process_package_0(data, db_package):
     for dict in data['attack_settings']['left_dictionaries']:
-        packageDict = FcPackageDictionary(package_id=db_package.id, dictionary_id=dict['id'])
+        packageDict = FcJobDictionary(job_id=db_package.id, dictionary_id=dict['id'])
         db.session.add(packageDict)
 
 
@@ -102,11 +102,11 @@ def process_package_1(package):
 
 def post_process_package_1(data, db_package):
     for dict in data['attack_settings']['left_dictionaries']:
-        packageDict = FcPackageDictionary(package_id=db_package.id, dictionary_id=dict['id'])
+        packageDict = FcJobDictionary(job_id=db_package.id, dictionary_id=dict['id'])
         db.session.add(packageDict)
 
     for dict in data['attack_settings']['right_dictionaries']:
-        packageDict = FcPackageDictionary(package_id=db_package.id, dictionary_id=dict['id'], is_left=False)
+        packageDict = FcJobDictionary(job_id=db_package.id, dictionary_id=dict['id'], is_left=False)
         db.session.add(packageDict)
 
 
@@ -119,16 +119,35 @@ def process_package_3(package, hashcatKeyspace=True):
     for mask in package['attack_settings']['masks']:
         check_mask_syntax(mask)
 
+    # charsets
+    hashcatArgs = ''
+    charsetsSize = []
+    if package['job_settings'].get('charset'):
+        if len(package['job_settings']['charset']) > 4:
+            abort(500, 'Maximum of charsets files is 4.')
+        for i, charset in enumerate(package['job_settings']['charset'], 1):
+            charsetPath = os.path.join(CHARSET_DIR, charset['name'])
+            charsetsSize = dict()
+            with open(charsetPath, 'rb') as f:
+                content = f.read()
+                charsetsSize[i] = len(content)
+
+            hashcatArgs += ' -' + str(i) + ' ' + charsetPath
+            hexCharset = content.hex()
+            package['config'] += '|||charset' + str(i) + '|String|' + lenStr(
+                hexCharset) + '|' + hexCharset + '|||\n'
+            package['charset' + str(i) + '_id'] = charset['id']
+
     # compute keyspace
     package['mask_table'] = []
     package['keyspace'] = 0
     package['hc_keyspace'] = 0
     for (i, mask) in enumerate(package['attack_settings']['masks']):
-        keyspace_for_mask = compute_keyspace_from_mask(mask)
+        keyspace_for_mask = compute_keyspace_from_mask(mask, charsetsSize)
         hc_keyspace_for_mask = 0
         if hashcatKeyspace:
             hc_keyspace_for_mask = shellExec(
-                HASHCAT_PATH + ' -m ' + package['hash_settings']['hash_type'] + ' --keyspace -a 3 ' + mask,
+                HASHCAT_PATH + ' -m ' + package['hash_settings']['hash_type'] + ' --keyspace -a 3 ' + mask + ' ' + hashcatArgs,
                 cwd=HASHCAT_DIR, abortOnError=True)
             if hc_keyspace_for_mask == '':
                 abort(500, 'Server can not compute keyspace for mask ' + mask)
@@ -157,16 +176,6 @@ def process_package_3(package, hashcatKeyspace=True):
 
     markovTreshold = package['attack_settings']['markov_treshold'] if package['attack_settings'].get(
         'markov_treshold') and package['attack_settings']['markov_treshold'] > 1 else None
-    if package['attack_settings'].get('charset_ids') and len(package['attack_settings']['charset_ids']) > 0:
-        if len(package['attack_settings']['charset_ids']) > 4:
-            abort(500, 'Maximum of 4 charsets file supported.')
-        for i, charsetID in enumerate(package['attack_settings']['charset_ids']):
-            charset = FcCharset.query.filter(FcCharset.id == charsetID).first()
-            if not charset:
-                abort(500, 'Wrong charset file selected.')
-            if not os.path.exists(os.path.join(CHARSET_DIR, charset.path)):
-                abort(500, 'Charset file does not exist.')
-            package['charset' + str(i)] = charset.name
 
     package['attack_name'] = 'mask'
     package['markov_threshold'] = markovTreshold
@@ -175,7 +184,7 @@ def process_package_3(package, hashcatKeyspace=True):
 
 def post_process_package_3(data, db_package):
     for mask in data['mask_table']:
-        db_mask = FcMask(package_id=db_package.id,
+        db_mask = FcMask(job_id=db_package.id,
                          mask=mask['mask'],
                          current_index='0',
                          keyspace=mask['keyspace'],
@@ -220,11 +229,11 @@ def process_package_6(package):
 
 def post_process_package_6(data, db_package):
     for dict in data['attack_settings']['left_dictionaries']:
-        packageDict = FcPackageDictionary(package_id=db_package.id, dictionary_id=dict['id'])
+        packageDict = FcJobDictionary(job_id=db_package.id, dictionary_id=dict['id'])
         db.session.add(packageDict)
 
     for dict in data['attack_settings']['right_dictionaries']:
-        packageDict = FcPackageDictionary(package_id=db_package.id, dictionary_id=dict.id, is_left=False)
+        packageDict = FcJobDictionary(job_id=db_package.id, dictionary_id=dict.id, is_left=False)
         db.session.add(packageDict)
 
 # hybrid attack
@@ -263,11 +272,11 @@ def process_package_7(package):
 
 def post_process_package_7(data, db_package):
     for dict in data['attack_settings']['left_dictionaries']:
-        packageDict = FcPackageDictionary(package_id=db_package.id, dictionary_id=dict.id)
+        packageDict = FcJobDictionary(job_id=db_package.id, dictionary_id=dict.id)
         db.session.add(packageDict)
 
     for dict in data['attack_settings']['right_dictionaries']:
-        packageDict = FcPackageDictionary(package_id=db_package.id, dictionary_id=dict['id'], is_left=False)
+        packageDict = FcJobDictionary(job_id=db_package.id, dictionary_id=dict['id'], is_left=False)
         db.session.add(packageDict)
 
 

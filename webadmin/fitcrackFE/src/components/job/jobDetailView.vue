@@ -91,7 +91,14 @@
                   </v-list-tile-action>
                   <v-list-tile-content>
                     <v-list-tile-title v-bind:class="data.status_type + '--text'" class="text-xs-right fw500">
-                      {{data.status_text}}
+                      <v-tooltip top>
+                        <span
+                          slot="activator"
+                        >
+                          {{ data.status_text }}
+                        </span>
+                        <span>{{ data.status_tooltip }}</span>
+                      </v-tooltip>
                     </v-list-tile-title>
                   </v-list-tile-content>
                 </v-list-tile>
@@ -629,7 +636,7 @@
           time_end: this.data.time_end === null ?
             this.$moment().format('DD/MM/YYYY HH:mm') :
             this.$moment(this.data.time_end).format('DD/MM/YYYY HH:mm'),
-          startNow: false,
+          startNow: (this.data.time_start === null),
           endNever: (this.data.time_end === null)
         }
         this.editJobDialog = true
@@ -659,6 +666,7 @@
         this.editHostsDialog = true
         this.axios.get(this.$serverAddr + '/hosts', {
           params: {
+            'all': true,
             'page': this.paginationHost.page,
             'per_page': this.paginationHost.rowsPerPage,
             'order_by': this.paginationHost.sortBy,

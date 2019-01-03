@@ -20,7 +20,7 @@ boincResult_model = api.model('boinc result', {
 
 job_model = api.model('Job', {
     'id': fields.String(),
-    'package_id': fields.Integer(),
+    'job_id': fields.Integer(),
     'workunit_id': fields.Integer(),
     'host_id': fields.Integer(),
     'boinc_host_id': fields.Integer(),
@@ -42,7 +42,7 @@ job_model = api.model('Job', {
 
 mask_model = api.model('Mask', {
     'id': fields.Integer(readOnly=True, required=False),
-    'package_id': fields.Integer(readOnly=True, required=False),
+    'job_id': fields.Integer(readOnly=True, required=False),
     'mask': fields.String(),
     'current_index': fields.Integer(),
     'keyspace': fields.Integer(),
@@ -114,6 +114,7 @@ package_model = api.model('Package', {
     'attack': fields.String(required=True),
     'status': fields.String(required=False),
     'status_text': fields.String(required=False),
+    'status_tooltip': fields.String(required=False),
     'status_type': fields.String(),
     'progress': fields.Float(required=False),
     'time': fields.DateTime(required=False),

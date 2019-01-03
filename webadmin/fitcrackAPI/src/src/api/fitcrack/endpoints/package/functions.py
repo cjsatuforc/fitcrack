@@ -23,7 +23,7 @@ from src.api.fitcrack.attacks import processPackage as attacks
 from src.api.fitcrack.attacks.functions import compute_keyspace_from_mask, coun_file_lines
 from src.api.fitcrack.functions import shellExec, lenStr
 from src.database import db
-from src.database.models import FcPackage, FcHashcache, FcHostActivity, FcBenchmark, Host, FcDictionary, FcRule, FcHash
+from src.database.models import FcJob, FcHashcache, FcHostActivity, FcBenchmark, Host, FcDictionary, FcRule, FcHash
 
 
 def create_package(data):
@@ -76,7 +76,7 @@ def create_package(data):
         package['time_end'] = None
 
 
-    db_package = FcPackage(
+    db_package = FcJob(
         token=token.hex,
         attack=package['attack_name'],
         attack_mode=package['attack_settings']['attack_mode'],
@@ -130,11 +130,11 @@ def create_package(data):
         db_host = Host.query.filter(Host.id == host).first()
         if not db_host:
             abort(400, 'Host with id ' + str(host) + ' does not exist.')
-        db_host_activity = FcHostActivity(package_id=db_package.id, boinc_host_id=db_host.id)
+        db_host_activity = FcHostActivity(job_id=db_package.id, boinc_host_id=db_host.id)
         db.session.add(db_host_activity)
 
     for hashObj in data['hash_settings']['hash_list']:
-        hash = FcHash(package_id=db_package.id, hash_type=package['hash_settings']['hash_type'], hash=hashObj['hash'])
+        hash = FcHash(job_id=db_package.id, hash_type=package['hash_settings']['hash_type'], hash=hashObj['hash'])
         db.session.add(hash)
 
     db.session.commit()
@@ -146,7 +146,7 @@ def create_package(data):
 
 
 def delete_package(id):
-    package = FcPackage.query.filter(FcPackage.id == id).one()
+    package = FcJob.query.filter(FcJob.id == id).one()
     if (package.deleted):
         package.deleted = False
     else:
