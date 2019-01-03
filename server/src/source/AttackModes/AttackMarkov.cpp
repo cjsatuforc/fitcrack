@@ -76,6 +76,17 @@ bool CAttackMarkov::makeJob()
     f << "|||start_index|BigUInt|" << digits << "|" << m_job->getStartIndex() << "|||\n";
     Tools::printDebug("|||start_index|BigUInt|%d|%" PRIu64 "|||\n", digits, m_job->getStartIndex());
 
+    /** Output markov_threshold */
+    uint32_t markov_threshold = m_package->getMarkovThreshold();
+    if (markov_threshold != 0)
+    {
+        digits = 0;
+        num = markov_threshold;
+        do { num /= 10; ++digits; } while (num != 0);    // Count digits
+        f << "|||markov_threshold|UInt|" << digits << "|" << markov_threshold << "|||\n";
+        Tools::printDebug("|||markov_threshold|UInt|%d|%" PRIu32 "|||\n", digits, markov_threshold);
+    }
+
     uint64_t maskHcKeyspace = jobMask->getHcKeyspace();
     uint64_t jobHcKeyspace = m_job->getHcKeyspace();
 

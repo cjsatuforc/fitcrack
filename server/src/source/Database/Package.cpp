@@ -34,6 +34,7 @@ CPackage::CPackage(DbMap &packageMap, CSqlLoader * sqlLoader)
         this->m_dict2 = packageMap["dict2"];
         this->m_rules = packageMap["rules"];
         this->m_markov = packageMap["markov_hcstat"];
+        this->m_markovThreshold = std::stoul(packageMap["markov_threshold"]);
         this->m_replicateFactor = std::stoul(packageMap["replicate_factor"]);
 
         /** Check for valid values */
@@ -385,4 +386,10 @@ uint64_t CPackage::getCombSecDictSize() const
 unsigned int CPackage::getTimeoutFactor() const
 {
     return m_timeoutFactor;
+}
+
+
+uint32_t CPackage::getMarkovThreshold() const
+{
+    return m_markovThreshold;
 }
