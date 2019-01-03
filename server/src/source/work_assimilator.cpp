@@ -75,8 +75,8 @@ const std::array<int, 34> BIN_HASH =
 /** @section 3-hde table names */
 /*******************************/
 
-std::string mysql_table_job =           "fc_job";
-std::string mysql_table_package =       "fc_package";
+std::string mysql_table_workunit =      "fc_workunit";
+std::string mysql_table_package =       "fc_job";
 std::string mysql_table_host =          "fc_host";
 std::string mysql_table_host_activity = "fc_host_activtity";
 std::string mysql_table_mask =          "fc_mask";
@@ -297,7 +297,7 @@ vector<MysqlJob *> find_jobs2(uint64_t package_id, std::string query)
 
     char buf[SQL_BUF_SIZE];
 
-    std::snprintf(buf, SQL_BUF_SIZE, "SELECT * FROM `%s` WHERE %s host_id IN (SELECT id FROM `%s` WHERE package_id= %" PRIu64 ") ORDER BY id DESC ;", mysql_table_job.c_str(), query.c_str(), mysql_table_host.c_str(), package_id);
+    std::snprintf(buf, SQL_BUF_SIZE, "SELECT * FROM `%s` WHERE %s host_id IN (SELECT id FROM `%s` WHERE job_id= %" PRIu64 ") ORDER BY id DESC ;", mysql_table_workunit.c_str(), query.c_str(), mysql_table_host.c_str(), package_id);
     update_mysql(buf);
 
     MYSQL_RES* rp;
@@ -331,7 +331,7 @@ vector<MysqlJob *> find_job_duplicates2(uint64_t package_id, uint64_t host_id)
     vector<MysqlJob *> result, temp;
     char buf[SQL_BUF_SIZE];
 
-    std::snprintf(buf, SQL_BUF_SIZE, "SELECT * FROM `%s` WHERE id = %" PRIu64 " LIMIT 1;", mysql_table_job.c_str(), host_id);
+    std::snprintf(buf, SQL_BUF_SIZE, "SELECT * FROM `%s` WHERE id = %" PRIu64 " LIMIT 1;", mysql_table_workunit.c_str(), host_id);
     log_messages.printf(MSG_DEBUG, "find_job_duplicates2-query: %s\n", buf);
 
     update_mysql(buf);
@@ -396,7 +396,7 @@ void delete_jobs2(vector<MysqlJob *> jobs)
 
     for(job = jobs.begin(); job != jobs.end(); ++job)
     {
-        std::snprintf(buf, SQL_BUF_SIZE, "DELETE FROM `%s` WHERE id = %" PRIu64 " LIMIT 1;", mysql_table_job.c_str(), (*job)->m_id);
+        std::snprintf(buf, SQL_BUF_SIZE, "DELETE FROM `%s` WHERE id = %" PRIu64 " LIMIT 1;", mysql_table_workunit.c_str(), (*job)->m_id);
         update_mysql(buf);
     }
 }
@@ -415,7 +415,7 @@ void finish_jobs(vector<MysqlJob *> jobs)
 
     for(job = jobs.begin(); job != jobs.end(); ++job)
     {
-        std::snprintf(buf, SQL_BUF_SIZE, "UPDATE `%s` SET finished = 1 WHERE id = %" PRIu64 " LIMIT 1;", mysql_table_job.c_str(), (*job)->m_id);
+        std::snprintf(buf, SQL_BUF_SIZE, "UPDATE `%s` SET finished = 1 WHERE id = %" PRIu64 " LIMIT 1;", mysql_table_workunit.c_str(), (*job)->m_id);
         update_mysql(buf);
     }
 }
@@ -428,7 +428,7 @@ void finish_jobs(vector<MysqlJob *> jobs)
 void set_retry_job(uint64_t workunit_id)
 {
     char buf[SQL_BUF_SIZE];
-    std::snprintf(buf, SQL_BUF_SIZE, "UPDATE `%s` SET retry = 1 WHERE workunit_id = %" PRIu64 " LIMIT 1;", mysql_table_job.c_str(), workunit_id);
+    std::snprintf(buf, SQL_BUF_SIZE, "UPDATE `%s` SET retry = 1 WHERE workunit_id = %" PRIu64 " LIMIT 1;", mysql_table_workunit.c_str(), workunit_id);
     update_mysql(buf);
 }
 
@@ -544,7 +544,7 @@ bool is_binary(uint64_t package_id)
 bool no_hashes_left(uint64_t package_id)
 {
     char buf[SQL_BUF_SIZE];
-    std::snprintf(buf, SQL_BUF_SIZE, "SELECT COUNT(*) FROM `%s` WHERE package_id = %" PRIu64 " AND result IS NULL ;", mysql_table_hash.c_str(), package_id);
+    std::snprintf(buf, SQL_BUF_SIZE, "SELECT COUNT(*) FROM `%s` WHERE job_id = %" PRIu64 " AND result IS NULL ;", mysql_table_hash.c_str(), package_id);
     uint64_t hashes_left = get_num_from_mysql(buf);
 
     return (hashes_left == 0);
@@ -595,7 +595,7 @@ int assimilate_handler(WORKUNIT& wu, vector<RESULT>& /*results*/, RESULT& canoni
     unsigned long int n = output_files.size();
 
     /** Find out who sent the result */
-    std::snprintf(buf, SQL_BUF_SIZE, "SELECT host_id FROM `%s` WHERE workunit_id = %lu LIMIT 1;", mysql_table_job.c_str(), wu.id);
+    std::snprintf(buf, SQL_BUF_SIZE, "SELECT host_id FROM `%s` WHERE workunit_id = %lu LIMIT 1;", mysql_table_workunit.c_str(), wu.id);
     host_id = get_num_from_mysql(buf);
 
     std::snprintf(buf, SQL_BUF_SIZE, "SELECT boinc_host_id FROM `%s` WHERE id = %" PRIu64 " LIMIT 1;", mysql_table_host.c_str(), host_id);
@@ -604,7 +604,7 @@ int assimilate_handler(WORKUNIT& wu, vector<RESULT>& /*results*/, RESULT& canoni
     std::cerr << __LINE__ << " - From host " << host_id << std::endl;
 
     /** Find out which package is the result from */
-    std::snprintf(buf, SQL_BUF_SIZE, "SELECT package_id FROM `%s` WHERE workunit_id = %lu LIMIT 1;", mysql_table_job.c_str(), wu.id);
+    std::snprintf(buf, SQL_BUF_SIZE, "SELECT job_id FROM `%s` WHERE workunit_id = %lu LIMIT 1;", mysql_table_workunit.c_str(), wu.id);
     package_id = get_num_from_mysql(buf);
 
     std::cerr << __LINE__ << " - From package " << package_id << std::endl;
@@ -619,7 +619,7 @@ int assimilate_handler(WORKUNIT& wu, vector<RESULT>& /*results*/, RESULT& canoni
     }
 
     // Read the fc_settings
-    std::snprintf(buf, SQL_BUF_SIZE, "SELECT delete_finished_jobs FROM `%s` LIMIT 1;", mysql_table_settings.c_str());
+    std::snprintf(buf, SQL_BUF_SIZE, "SELECT delete_finished_workunits FROM `%s` LIMIT 1;", mysql_table_settings.c_str());
     uint64_t deleteFlag = get_num_from_mysql(buf);
 
     for (unsigned int i = 0; i < n; ++i)
@@ -761,7 +761,7 @@ int assimilate_handler(WORKUNIT& wu, vector<RESULT>& /*results*/, RESULT& canoni
                 std::snprintf(buf, SQL_BUF_SIZE, "UPDATE `%s` SET cracking_time = cracking_time + %lf WHERE id = %" PRIu64 " ;", mysql_table_package.c_str(), cracking_time, package_id);
                 update_mysql(buf);
 
-                std::snprintf(buf, SQL_BUF_SIZE, "UPDATE `%s` SET cracking_time = %lf WHERE `workunit_id` = %lu LIMIT 1;", mysql_table_job.c_str(), cracking_time, wu.id);
+                std::snprintf(buf, SQL_BUF_SIZE, "UPDATE `%s` SET cracking_time = %lf WHERE `workunit_id` = %lu LIMIT 1;", mysql_table_workunit.c_str(), cracking_time, wu.id);
                 update_mysql(buf);
             }
 
@@ -792,7 +792,7 @@ int assimilate_handler(WORKUNIT& wu, vector<RESULT>& /*results*/, RESULT& canoni
             }
 
             /** Read job keyspace for updating*/
-            std::snprintf(buf, SQL_BUF_SIZE, "SELECT hc_keyspace FROM `%s` WHERE workunit_id = %lu LIMIT 1;", mysql_table_job.c_str(), wu.id);
+            std::snprintf(buf, SQL_BUF_SIZE, "SELECT hc_keyspace FROM `%s` WHERE workunit_id = %lu LIMIT 1;", mysql_table_workunit.c_str(), wu.id);
             uint64_t hc_keyspace = get_num_from_mysql(buf);
             uint64_t power_keyspace = hc_keyspace;
 
@@ -819,8 +819,8 @@ int assimilate_handler(WORKUNIT& wu, vector<RESULT>& /*results*/, RESULT& canoni
             }
 
             /** Read job properties */
-            std::snprintf(buf, SQL_BUF_SIZE, "SELECT seconds_per_job FROM `%s` WHERE id = %" PRIu64 " LIMIT 1;", mysql_table_package.c_str(), package_id);
-            uint64_t seconds_per_job = get_num_from_mysql(buf);
+            std::snprintf(buf, SQL_BUF_SIZE, "SELECT seconds_per_workunit FROM `%s` WHERE id = %" PRIu64 " LIMIT 1;", mysql_table_package.c_str(), package_id);
+            uint64_t seconds_per_workunit = get_num_from_mysql(buf);
 
             std::snprintf(buf, SQL_BUF_SIZE, "SELECT power FROM `%s` WHERE id = %" PRIu64 " LIMIT 1;", mysql_table_host.c_str(), host_id);
             uint64_t old_power = get_num_from_mysql(buf);
@@ -840,7 +840,7 @@ int assimilate_handler(WORKUNIT& wu, vector<RESULT>& /*results*/, RESULT& canoni
                     std::snprintf(buf, SQL_BUF_SIZE, "UPDATE `%s` SET cracking_time = cracking_time + %lf WHERE id = %" PRIu64 " ;", mysql_table_package.c_str(), cracking_time, package_id);
                     update_mysql(buf);
 
-                    std::snprintf(buf, SQL_BUF_SIZE, "UPDATE `%s` SET cracking_time = %lf WHERE `workunit_id` = %lu LIMIT 1;", mysql_table_job.c_str(), cracking_time, wu.id);
+                    std::snprintf(buf, SQL_BUF_SIZE, "UPDATE `%s` SET cracking_time = %lf WHERE `workunit_id` = %lu LIMIT 1;", mysql_table_workunit.c_str(), cracking_time, wu.id);
                     update_mysql(buf);
                 }
 
@@ -868,7 +868,7 @@ int assimilate_handler(WORKUNIT& wu, vector<RESULT>& /*results*/, RESULT& canoni
 
                             /** Save the password to DB */
                             std::snprintf(buf, SQL_BUF_SIZE,
-                                          "UPDATE `%s` SET `result` = '%s', `time_cracked` = NOW() WHERE `package_id` = %" PRIu64 " AND `result` IS NULL LIMIT 1; ",
+                                          "UPDATE `%s` SET `result` = '%s', `time_cracked` = NOW() WHERE `job_id` = %" PRIu64 " AND `result` IS NULL LIMIT 1; ",
                                           mysql_table_hash.c_str(), found_hash, package_id);
                             update_mysql(buf);
                         }
@@ -904,7 +904,7 @@ int assimilate_handler(WORKUNIT& wu, vector<RESULT>& /*results*/, RESULT& canoni
 
                         /** Save the password to DB */
                         std::snprintf(buf, SQL_BUF_SIZE,
-                                      "UPDATE `%s` SET `result` = '%s', `time_cracked` = NOW() WHERE `package_id` = %" PRIu64 " AND LOWER(CONVERT(`hash` USING latin1)) = LOWER(CONVERT('%s' USING latin1)) AND `result` IS NULL ; ",
+                                      "UPDATE `%s` SET `result` = '%s', `time_cracked` = NOW() WHERE `job_id` = %" PRIu64 " AND LOWER(CONVERT(`hash` USING latin1)) = LOWER(CONVERT('%s' USING latin1)) AND `result` IS NULL ; ",
                                       mysql_table_hash.c_str(), found_hash, package_id, hash_string);
                         update_mysql(buf);
                     }
@@ -933,7 +933,7 @@ int assimilate_handler(WORKUNIT& wu, vector<RESULT>& /*results*/, RESULT& canoni
                     update_mysql(buf);
 
                     /** Update the host power, if job was large enough (more then 1/2 benchmarked power) */
-                    if (power_keyspace > (0.5 * seconds_per_job * old_power))
+                    if (power_keyspace > (0.5 * seconds_per_workunit * old_power))
                         update_power(host_id, power_keyspace, canonical_result.elapsed_time);
                     else
                         std::cerr << __LINE__ << " - WARNING: Assimilated job is too small for update_power calculation" << std::endl;
@@ -957,11 +957,11 @@ int assimilate_handler(WORKUNIT& wu, vector<RESULT>& /*results*/, RESULT& canoni
                     std::snprintf(buf, SQL_BUF_SIZE, "UPDATE `%s` SET cracking_time = cracking_time + %lf WHERE id = %" PRIu64 " ;", mysql_table_package.c_str(), cracking_time, package_id);
                     update_mysql(buf);
 
-                    std::snprintf(buf, SQL_BUF_SIZE, "UPDATE `%s` SET cracking_time = %lf WHERE `workunit_id` = %lu LIMIT 1;", mysql_table_job.c_str(), cracking_time, wu.id);
+                    std::snprintf(buf, SQL_BUF_SIZE, "UPDATE `%s` SET cracking_time = %lf WHERE `workunit_id` = %lu LIMIT 1;", mysql_table_workunit.c_str(), cracking_time, wu.id);
                     update_mysql(buf);
 
                     /** Update the host power, if job was large enough (more then 1/2 benchmarked power) */
-                    if (power_keyspace > (0.15 * seconds_per_job * old_power))
+                    if (power_keyspace > (0.15 * seconds_per_workunit * old_power))
                         update_power(host_id, power_keyspace, canonical_result.elapsed_time);
                     else
                         std::cerr << __LINE__ << " - WARNING: Assimilated job is too small for update_power calculation" << std::endl;
@@ -1036,7 +1036,7 @@ int assimilate_handler(WORKUNIT& wu, vector<RESULT>& /*results*/, RESULT& canoni
                 std::cerr << __LINE__ << " - Benchmark time: " << cracking_time << "s" << std::endl;
 
                 std::snprintf(buf, SQL_BUF_SIZE, "UPDATE `%s` SET cracking_time = %lf WHERE `workunit_id` = %lu LIMIT 1 ;",
-                    mysql_table_job.c_str(), cracking_time, wu.id);
+                    mysql_table_workunit.c_str(), cracking_time, wu.id);
                 update_mysql(buf);
 
                 /** Read the results */
@@ -1087,7 +1087,7 @@ int assimilate_handler(WORKUNIT& wu, vector<RESULT>& /*results*/, RESULT& canoni
                 update_mysql(buf);
 
                 /** Set package to finished when all host are done */
-                std::snprintf(buf, SQL_BUF_SIZE, "SELECT COUNT(*) FROM `%s` WHERE package_id = %d AND status = %d ;", mysql_table_host.c_str(), BENCHALL_PACKAGE_ID, Host_benchmark);
+                std::snprintf(buf, SQL_BUF_SIZE, "SELECT COUNT(*) FROM `%s` WHERE job_id = %d AND status = %d ;", mysql_table_host.c_str(), BENCHALL_PACKAGE_ID, Host_benchmark);
                 unsigned int row_cnt = get_num_from_mysql(buf);
 
                 if (row_cnt == 0)
@@ -1113,14 +1113,14 @@ int assimilate_handler(WORKUNIT& wu, vector<RESULT>& /*results*/, RESULT& canoni
         {
             /** Delete finished job */
             std::cerr << __LINE__ << " - Deleting assimilated job with workId " << wu.id << std::endl;
-            std::snprintf(buf, SQL_BUF_SIZE, "DELETE FROM `%s` WHERE workunit_id = %lu ;", mysql_table_job.c_str(), wu.id);
+            std::snprintf(buf, SQL_BUF_SIZE, "DELETE FROM `%s` WHERE workunit_id = %lu ;", mysql_table_workunit.c_str(), wu.id);
             update_mysql(buf);
         }
         else
         {
             /** Set job finished flag */
             std::cerr << __LINE__ << " - Setting finished flag to assimilated job with workunit_id " << wu.id << std::endl;
-            std::snprintf(buf, SQL_BUF_SIZE, "UPDATE `%s` SET finished = 1, progress = 100 WHERE workunit_id = %lu ;", mysql_table_job.c_str(), wu.id);
+            std::snprintf(buf, SQL_BUF_SIZE, "UPDATE `%s` SET finished = 1, progress = 100 WHERE workunit_id = %lu ;", mysql_table_workunit.c_str(), wu.id);
             update_mysql(buf);
         }
 

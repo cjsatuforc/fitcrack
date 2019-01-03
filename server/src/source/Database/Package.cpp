@@ -1,6 +1,6 @@
 /**
  * @file Package.cpp
- * @brief Source file for fc_package entry
+ * @brief Source file for fc_job entry
  * @authors Lukas Zobal (zobal.lukas(at)gmail.com)
  * @date 12. 12. 2018
  * @license MIT, see LICENSE
@@ -28,7 +28,7 @@ CPackage::CPackage(DbMap &packageMap, CSqlLoader * sqlLoader)
         this->m_currentIndex = std::stoull(packageMap["current_index"]);
         this->m_currentIndex2 = std::stoull(packageMap["current_index_2"]);
         this->m_name = packageMap["name"];
-        this->m_secondsPerJob = std::stoull(packageMap["seconds_per_job"]);
+        this->m_secondsPerWorkunit = std::stoull(packageMap["seconds_per_workunit"]);
         this->m_config = packageMap["config"];
         this->m_dict1 = packageMap["dict1"];
         this->m_dict2 = packageMap["dict2"];
@@ -37,12 +37,12 @@ CPackage::CPackage(DbMap &packageMap, CSqlLoader * sqlLoader)
         this->m_replicateFactor = std::stoul(packageMap["replicate_factor"]);
 
         /** Check for valid values */
-        if (this->m_secondsPerJob < Config::minSeconds)
+        if (this->m_secondsPerWorkunit < Config::minSeconds)
         {
             Tools::printDebugPackage(Config::DebugType::Warn, this->m_id,
                     "Found seconds_per_job=%" PRIu64 ", falling back to minimum of %" PRIu64"s\n",
-                    this->m_secondsPerJob, Config::minSeconds);
-            this->m_secondsPerJob = Config::minSeconds;
+                    this->m_secondsPerWorkunit, Config::minSeconds);
+            this->m_secondsPerWorkunit = Config::minSeconds;
         }
 
         if (this->m_keyspace == 0 && this->m_id != Config::benchAllId)
@@ -64,8 +64,8 @@ CPackage::CPackage(DbMap &packageMap, CSqlLoader * sqlLoader)
 
         m_maxSeconds = m_secondsPassed + Config::minSeconds;
 
-        if(m_maxSeconds > this->m_secondsPerJob)
-            m_maxSeconds = this->m_secondsPerJob;
+        if(m_maxSeconds > this->m_secondsPerWorkunit)
+            m_maxSeconds = this->m_secondsPerWorkunit;
 
         /** Load job timeout */
         m_timeoutFactor = m_sqlLoader->getTimeoutFactor();
@@ -270,7 +270,7 @@ const std::string & CPackage::getName() const
 
 uint64_t CPackage::getSecondsPerJob() const
 {
-    return m_secondsPerJob;
+    return m_secondsPerWorkunit;
 }
 
 

@@ -1,6 +1,6 @@
 /**
  * @file Package.h
- * @brief Header file for fc_package entry
+ * @brief Header file for fc_job entry
  * @authors Lukas Zobal (zobal.lukas(at)gmail.com)
  * @date 12. 12. 2018
  * @license MIT, see LICENSE
@@ -111,7 +111,7 @@ class CPackage {
         uint64_t    m_currentIndex;
         uint64_t    m_currentIndex2;
         std::string m_name;
-        uint64_t    m_secondsPerJob;
+        uint64_t    m_secondsPerWorkunit;
         std::string m_config;
         std::string m_dict1;
         std::string m_dict2;

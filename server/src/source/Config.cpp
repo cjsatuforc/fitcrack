@@ -23,14 +23,14 @@ std::map<std::pair<uint64_t, uint64_t>, std::ifstream* > Tools::m_fd_map;
 namespace Config {
     /** Table names, for easy configuration */
     std::string tableNameBenchmark =    "fc_benchmark";
-    std::string tableNameJob =          "fc_job";
-    std::string tableNamePackage =      "fc_package";
+    std::string tableNameWorkunit =     "fc_workunit";
+    std::string tableNamePackage =      "fc_job";
     std::string tableNameHost =         "fc_host";
     std::string tableNameHostActivity = "fc_host_activity";
     std::string tableNameMask =         "fc_mask";
     std::string tableNameSettings =     "fc_settings";
     std::string tableNameDictionary =   "fc_dictionary";
-    std::string tableNamePckgDictionary = "fc_package_dictionary";
+    std::string tableNamePckgDictionary = "fc_job_dictionary";
     std::string tableNameHash =         "fc_hash";
 
     /** Path to dictionaries */

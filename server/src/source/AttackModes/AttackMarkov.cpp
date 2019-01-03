@@ -199,7 +199,7 @@ bool CAttackMarkov::makeJob()
     restrict_wu_to_host(wu, m_job->getBoincHostId());
 
     m_job->setWorkunitId(uint64_t(wu.id));
-    m_sqlLoader->addNewJob(m_job);
+    m_sqlLoader->addNewWorkunit(m_job);
 
     Tools::printDebugHost(Config::DebugType::Log, m_package->getId(), m_host->getBoincHostId(),
             "Workunit succesfully created\n");

@@ -1,6 +1,6 @@
 /**
  * @file Job.cpp
- * @brief Source file for fc_job entry
+ * @brief Source file for fc_workunit entry
  * @authors Lukas Zobal (zobal.lukas(at)gmail.com)
  * @date 12. 12. 2018
  * @license MIT, see LICENSE
@@ -15,7 +15,7 @@ CJob::CJob(DbMap & jobMap)
     try
     {
         this->m_id = std::stoull(jobMap["id"]);
-        this->m_packageId = std::stoull(jobMap["package_id"]);
+        this->m_packageId = std::stoull(jobMap["job_id"]);
         this->m_workunitId = std::stoull(jobMap["workunit_id"]);
         this->m_hostId = std::stoull(jobMap["host_id"]);
         this->m_boincHostId = std::stoull(jobMap["boinc_host_id"]);
@@ -81,7 +81,7 @@ PtrJob CJob::create(DbMap & jobMap, CSqlLoader * sqlLoader)
 
 std::string CJob::getTableName()
 {
-    return Config::tableNameJob;
+    return Config::tableNameWorkunit;
 }
 
 

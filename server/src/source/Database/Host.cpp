@@ -18,7 +18,7 @@ CHost::CHost(DbMap & hostMap, CSqlLoader * sqlLoader)
         this->m_id = std::stoull(hostMap["id"]);
         this->m_boincHostId = std::stoull(hostMap["boinc_host_id"]);
         this->m_power = std::stoull(hostMap["power"]);
-        this->m_packageId = std::stoull(hostMap["package_id"]);
+        this->m_packageId = std::stoull(hostMap["job_id"]);
         this->m_status = std::stoul(hostMap["status"]);
     }
     catch(std::logic_error & error)

@@ -1,6 +1,6 @@
 /**
  * @file Job.h
- * @brief Header file for fc_job entry
+ * @brief Header file for fc_workunit entry
  * @authors Lukas Zobal (zobal.lukas(at)gmail.com)
  * @date 12. 12. 2018
  * @license MIT, see LICENSE

@@ -16,7 +16,7 @@ CDictionary::CDictionary(DbMap &dictMap, CSqlLoader *sqlLoader)
     try
     {
         this->m_id = std::stoull(dictMap["id"]);
-        this->m_packageId = std::stoull(dictMap["package_id"]);
+        this->m_packageId = std::stoull(dictMap["job_id"]);
         this->m_dictionaryId = std::stoull(dictMap["dictionary_id"]);
         this->m_currentIndex = std::stoull(dictMap["current_index"]);
         this->m_hcKeyspace = std::stoull(dictMap["keyspace"]);

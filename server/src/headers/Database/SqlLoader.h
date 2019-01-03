@@ -157,7 +157,7 @@ class CSqlLoader {
          * @brief Inserts new job to fc_job table
          * @param job Pointer to job appended to database
          */
-        void addNewJob(Config::Ptr<CJob> job);
+        void addNewWorkunit(Config::Ptr<CJob> job);
 
         /**
          * @brief Reads default_job_timeout_factor from fc_settings

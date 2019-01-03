@@ -42,7 +42,7 @@ namespace Config {
 
     /** Table names, for easy configuration */
     extern std::string tableNameBenchmark;
-    extern std::string tableNameJob;
+    extern std::string tableNameWorkunit;
     extern std::string tableNamePackage;
     extern std::string tableNameHost;
     extern std::string tableNameHostActivity;

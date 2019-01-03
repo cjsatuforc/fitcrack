@@ -42,21 +42,21 @@ std::vector<PtrHost> CSqlLoader::loadActiveHosts(uint64_t packageId)
     addNewHosts(packageId);
 
     /** Return all active hosts for packageId */
-    return load<CHost>(formatQuery("WHERE (status = %d OR status = %d) AND `package_id` = %" PRIu64 "",
+    return load<CHost>(formatQuery("WHERE (status = %d OR status = %d) AND `job_id` = %" PRIu64 "",
                                    Config::HostState::HostBench, Config::HostState::HostNormal, packageId));
 }
 
 
 std::vector<PtrHost> CSqlLoader::loadFinishedHosts()
 {
-    return load<CHost>(formatQuery("WHERE `package_id` IN (SELECT id FROM `%s` WHERE `status` < %d ) ; ",
+    return load<CHost>(formatQuery("WHERE `job_id` IN (SELECT id FROM `%s` WHERE `status` < %d ) ; ",
                                    CPackage::getTableName().c_str(), Config::PackageState::PackageRunning));
 }
 
 
 void CSqlLoader::removeFinishedHosts()
 {
-    updateSql(formatQuery("DELETE FROM `%s` WHERE `package_id` IN (SELECT id FROM `%s` WHERE `status` < %d ) ; ",
+    updateSql(formatQuery("DELETE FROM `%s` WHERE `job_id` IN (SELECT id FROM `%s` WHERE `status` < %d ) ; ",
                           CHost::getTableName().c_str(), CPackage::getTableName().c_str(),
                           Config::PackageState::PackageRunning));
 }
@@ -79,7 +79,7 @@ void CSqlLoader::finishTimeoutPackages()
 uint64_t CSqlLoader::getBenchCount(uint64_t packageId, uint64_t hostId)
 {
     return getRowCount<CJob>(formatQuery(
-            "WHERE `host_id` = %" PRIu64 " AND `package_id` = %" PRIu64 " AND `finished` = 0 AND `retry` = 0 AND `hc_keyspace` = 0",
+            "WHERE `host_id` = %" PRIu64 " AND `job_id` = %" PRIu64 " AND `finished` = 0 AND `retry` = 0 AND `hc_keyspace` = 0",
             hostId, packageId));
 }
 
@@ -90,7 +90,7 @@ uint64_t CSqlLoader::getJobCount(uint64_t packageId, uint64_t hostId)
      * @warning This select is used for job generating, retry == 0 is checked (retry == 1 is not and active job)
      */
     return getRowCount<CJob>(formatQuery(
-            "WHERE `host_id` = %" PRIu64 " AND `package_id` = %" PRIu64 " AND `finished` = 0 AND `retry` = 0 AND `hc_keyspace` > 0",
+            "WHERE `host_id` = %" PRIu64 " AND `job_id` = %" PRIu64 " AND `finished` = 0 AND `retry` = 0 AND `hc_keyspace` > 0",
             hostId, packageId));
 }
 
@@ -101,7 +101,7 @@ uint64_t CSqlLoader::getJobCount(uint64_t packageId)
      * @warning This select is used for finished status checking, retry == 0 is not checked (new jobs will be generated)
      */
     return getRowCount<CJob>(
-            formatQuery("WHERE `package_id` = %" PRIu64 " AND `finished` = 0 AND `hc_keyspace` > 0", packageId));
+            formatQuery("WHERE `job_id` = %" PRIu64 " AND `finished` = 0 AND `hc_keyspace` > 0", packageId));
 }
 
 
@@ -113,7 +113,7 @@ void CSqlLoader::setJobFinished(uint64_t id)
 
 Config::Ptr<CJob> CSqlLoader::getEasiestRetry(uint64_t packageId)
 {
-    std::vector<Config::Ptr<CJob>> jobVec = load<CJob>(formatQuery("WHERE retry != 0 AND finished = 0 AND hc_keyspace != 0 AND package_id = %" PRIu64 " ORDER BY hc_keyspace ASC",
+    std::vector<Config::Ptr<CJob>> jobVec = load<CJob>(formatQuery("WHERE retry != 0 AND finished = 0 AND hc_keyspace != 0 AND job_id = %" PRIu64 " ORDER BY hc_keyspace ASC",
                                                                    packageId));
 
     if (jobVec.empty())
@@ -179,9 +179,9 @@ bool CSqlLoader::isPackageTimeout(uint64_t packageId)
 }
 
 
-void CSqlLoader::addNewJob(PtrJob job)
+void CSqlLoader::addNewWorkunit(PtrJob job)
 {
-    return updateSql(formatQuery("INSERT INTO `%s` (`package_id`,`workunit_id`,`host_id`, `boinc_host_id`, \
+    return updateSql(formatQuery("INSERT INTO `%s` (`job_id`,`workunit_id`,`host_id`, `boinc_host_id`, \
 `start_index`, `start_index_2`, `hc_keyspace`, `mask_id`, `dictionary_id`, `duplicated`, `duplicate`, `retry`) VALUES ('%" PRIu64 "','%" PRIu64 "',\
 '%" PRIu64 "','%" PRIu64 "','%" PRIu64 "','%" PRIu64 "','%" PRIu64 "','%" PRIu64 "','%" PRIu64 "','%d', '%" PRIu64 "', '%d');",
                                  CJob::getTableName().c_str(), job->getPackageId(), job->getWorkunitId(), job->getHostId(),
@@ -193,7 +193,7 @@ void CSqlLoader::addNewJob(PtrJob job)
 
 unsigned int CSqlLoader::getTimeoutFactor()
 {
-    return (unsigned int)(getSqlNumber(formatQuery("SELECT `default_job_timeout_factor` FROM `%s` LIMIT 1",
+    return (unsigned int)(getSqlNumber(formatQuery("SELECT `default_workunit_timeout_factor` FROM `%s` LIMIT 1",
                                                   Config::tableNameSettings.c_str())));
 }
 
@@ -221,13 +221,13 @@ void CSqlLoader::updateEndTimeNow(uint64_t packageId)
 
 std::vector<Config::Ptr<CMask>> CSqlLoader::loadPackageMasks(uint64_t packageId)
 {
-    return load<CMask>(formatQuery("WHERE `package_id` = %" PRIu64 " AND `current_index` < `hc_keyspace` ORDER BY id ASC",
+    return load<CMask>(formatQuery("WHERE `job_id` = %" PRIu64 " AND `current_index` < `hc_keyspace` ORDER BY id ASC",
                                    packageId));
 }
 
 
 std::vector<Config::Ptr<CDictionary>> CSqlLoader::loadPackageDictionaries(uint64_t packageId) {
-    return customLoad<CDictionary>(formatQuery("SELECT `%s`.*, `%s`.`path`, `%s`.`keyspace` FROM `%s` INNER JOIN `%s` ON `%s`.`dictionary_id` = `%s`.`id` WHERE `package_id` = %" PRIu64 " AND `current_index` < `keyspace` ORDER BY `%s`.`id` ASC ;",
+    return customLoad<CDictionary>(formatQuery("SELECT `%s`.*, `%s`.`path`, `%s`.`keyspace` FROM `%s` INNER JOIN `%s` ON `%s`.`dictionary_id` = `%s`.`id` WHERE `job_id` = %" PRIu64 " AND `current_index` < `keyspace` ORDER BY `%s`.`id` ASC ;",
                                                Config::tableNamePckgDictionary.c_str(), Config::tableNameDictionary.c_str(),
                                                Config::tableNameDictionary.c_str(), Config::tableNamePckgDictionary.c_str(),
                                                Config::tableNameDictionary.c_str(), Config::tableNamePckgDictionary.c_str(),
@@ -238,7 +238,7 @@ std::vector<Config::Ptr<CDictionary>> CSqlLoader::loadPackageDictionaries(uint64
 std::vector<std::string> CSqlLoader::loadPackageHashes(uint64_t packageId)
 {
     std::vector<std::string> result;
-    updateSql(formatQuery("SELECT REPLACE(TO_BASE64(`hash`), '\n', '') FROM `%s` WHERE `package_id` = %" PRIu64 " AND `result` IS NULL ;",
+    updateSql(formatQuery("SELECT REPLACE(TO_BASE64(`hash`), '\n', '') FROM `%s` WHERE `job_id` = %" PRIu64 " AND `result` IS NULL ;",
                           Config::tableNameHash.c_str(), packageId));
 
     MYSQL_RES* sqlResult;
@@ -298,7 +298,7 @@ Config::Ptr<CPackage> CSqlLoader::loadPackage(uint64_t packageId)
 uint64_t CSqlLoader::getTotalPower(uint64_t packageId)
 {
     return getSqlNumber(formatQuery(
-            "SELECT SUM(power) FROM `%s` WHERE `package_id` = %" PRIu64 ";",
+            "SELECT SUM(power) FROM `%s` WHERE `job_id` = %" PRIu64 ";",
             CHost::getTableName().c_str(), packageId));
 }
 
@@ -332,7 +332,7 @@ std::string CSqlLoader::getDictFileName(uint64_t dictId)
 
 bool CSqlLoader::isAnythingCracked(uint64_t packageId)
 {
-    return getSqlNumber(formatQuery("SELECT COUNT(*) FROM `%s` WHERE `package_id` = %" PRIu64 " AND `result` IS NOT NULL ;",
+    return getSqlNumber(formatQuery("SELECT COUNT(*) FROM `%s` WHERE `job_id` = %" PRIu64 " AND `result` IS NOT NULL ;",
             Config::tableNameHash.c_str(), packageId)) != 0;
 }
 
@@ -373,7 +373,7 @@ char * CSqlLoader::formatQuery(const char * format, ...)
 void CSqlLoader::addNewHosts(uint64_t packageId)
 {
     /** Find missing hosts */
-    updateSql(formatQuery("SELECT id FROM host WHERE id IN (SELECT `boinc_host_id` FROM `%s` WHERE `package_id` = %" PRIu64 ") AND id NOT IN (SELECT `boinc_host_id` FROM `%s` WHERE `package_id` = %" PRIu64 ");",
+    updateSql(formatQuery("SELECT id FROM host WHERE id IN (SELECT `boinc_host_id` FROM `%s` WHERE `job_id` = %" PRIu64 ") AND id NOT IN (SELECT `boinc_host_id` FROM `%s` WHERE `job_id` = %" PRIu64 ");",
                           Config::tableNameHostActivity.c_str(), packageId, CHost::getTableName().c_str(), packageId));
 
     MYSQL_RES* sqlResult;
@@ -395,7 +395,7 @@ void CSqlLoader::addNewHosts(uint64_t packageId)
             newHostId = std::stoull(row[0]);
 
             /** Insert new hosts to fc_host */
-            updateSql(formatQuery("INSERT INTO `%s` (`boinc_host_id`, `package_id`) VALUES (%" PRIu64 ", %" PRIu64 ");",
+            updateSql(formatQuery("INSERT INTO `%s` (`boinc_host_id`, `job_id`) VALUES (%" PRIu64 ", %" PRIu64 ");",
                                   CHost::getTableName().c_str(), newHostId, packageId));
 
             Tools::printDebugHost(Config::DebugType::Log, packageId, newHostId,
