@@ -1,9 +1,9 @@
 --
 -- Spúšťače 
 --
-DROP TRIGGER IF EXISTS `package_notification`;
+DROP TRIGGER IF EXISTS `job_notification`;
 DELIMITER //
-CREATE TRIGGER `package_notification` AFTER UPDATE ON `fc_package`
+CREATE TRIGGER `job_notification` AFTER UPDATE ON `fc_job`
  FOR EACH ROW BEGIN
 	DECLARE userID int;
 	DECLARE done INT DEFAULT FALSE;
@@ -12,7 +12,7 @@ CREATE TRIGGER `package_notification` AFTER UPDATE ON `fc_package`
 
 	-- insert progress info to graph table
 	IF NEW.indexes_verified <> OLD.indexes_verified THEN
-		INSERT INTO fc_package_graph (progress, package_id) VALUES (
+		INSERT INTO fc_job_graph (progress, job_id) VALUES (
 	        IF(NEW.hc_keyspace = 0 OR NEW.status = 1 OR NEW.status = 2,
 	           100,
 	           ROUND((NEW.indexes_verified / IF( NEW.attack_mode = 1, NEW.keyspace, NEW.hc_keyspace )) * 100, 2)
@@ -21,18 +21,18 @@ CREATE TRIGGER `package_notification` AFTER UPDATE ON `fc_package`
 	        NEW.id  );
 	END IF;
 
-	-- package status changed. We need to send notifications!
+	-- job status changed. We need to send notifications!
 	IF NEW.status <> OLD.status THEN
 
 		IF NEW.status = 10 THEN
-			INSERT INTO fc_package_graph (progress, package_id) VALUES ( 0, NEW.id);
+			INSERT INTO fc_job_graph (progress, job_id) VALUES ( 0, NEW.id);
 		END IF;
 
 		IF NEW.status = 1 OR NEW.status = 2 THEN
-			INSERT INTO fc_package_graph (progress, package_id) VALUES ( 100, NEW.id);
+			INSERT INTO fc_job_graph (progress, job_id) VALUES ( 100, NEW.id);
 		END IF;
 
-		-- send notification to admins that can view this package
+		-- send notification to admins that can view this job
 		OPEN usersCursor;
 			user_loop: LOOP
 				FETCH usersCursor INTO userID;
@@ -54,7 +54,7 @@ DELIMITER ;
 --
 DROP TRIGGER IF EXISTS `bench_retry_finish`;
 DELIMITER //
-CREATE TRIGGER `bench_retry_finish` BEFORE UPDATE ON `fc_job`
+CREATE TRIGGER `bench_retry_finish` BEFORE UPDATE ON `fc_workunit`
  FOR EACH ROW BEGIN
 	IF (NEW.retry = 1 AND OLD.retry = 0 AND NEW.hc_keyspace = 0)
 	THEN
@@ -65,7 +65,7 @@ END
 DELIMITER ;
 
 --
--- If BOINC error appears, set host status to benchmark and job to retry
+-- If BOINC error appears, set host status to benchmark and workunit to retry
 --
 DROP TRIGGER IF EXISTS `client_error_trigger`;
 DELIMITER //
@@ -73,13 +73,13 @@ CREATE TRIGGER `client_error_trigger` BEFORE UPDATE ON `result`
  FOR EACH ROW BEGIN
 	IF (NEW.outcome = 3 AND OLD.outcome != 3)
 	THEN
-		UPDATE `fc_job` SET retry = 1 WHERE `workunit_id` = NEW.workunitid LIMIT 1;
-		UPDATE `fc_host` SET `status` = 0, `power` = 0 WHERE id IN (SELECT `host_id` FROM `fc_job` WHERE `workunit_id` = NEW.workunitid) LIMIT 1;
+		UPDATE `fc_workunit` SET retry = 1 WHERE `workunit_id` = NEW.workunitid LIMIT 1;
+		UPDATE `fc_host` SET `status` = 0, `power` = 0 WHERE id IN (SELECT `host_id` FROM `fc_workunit` WHERE `workunit_id` = NEW.workunitid) LIMIT 1;
 	END IF;
 	IF (NEW.outcome = 7 AND OLD.outcome != 7)
 	THEN
-		UPDATE `fc_job` SET retry = 1 WHERE `workunit_id` = NEW.workunitid LIMIT 1;
-		UPDATE `fc_host` SET `status` = 0, `power` = 0 WHERE id IN (SELECT `host_id` FROM `fc_job` WHERE `workunit_id` = NEW.workunitid) LIMIT 1;
+		UPDATE `fc_workunit` SET retry = 1 WHERE `workunit_id` = NEW.workunitid LIMIT 1;
+		UPDATE `fc_host` SET `status` = 0, `power` = 0 WHERE id IN (SELECT `host_id` FROM `fc_workunit` WHERE `workunit_id` = NEW.workunitid) LIMIT 1;
 	END IF;
 END
 //
@@ -105,23 +105,23 @@ FOR EACH ROW BEGIN
 
 	IF (benchAll)
 	THEN		
-		SET currentState = (SELECT `status` FROM `fc_package` WHERE `id` = 1 LIMIT 1);
+		SET currentState = (SELECT `status` FROM `fc_job` WHERE `id` = 1 LIMIT 1);
 
 		IF (currentState < 10)
         	THEN
-			DELETE FROM `fc_host_activity` WHERE `package_id` = 1 ;
-			UPDATE `fc_package` SET `time_start` = NOW() WHERE `id` = 1 LIMIT 1;
+			DELETE FROM `fc_host_activity` WHERE `job_id` = 1 ;
+			UPDATE `fc_job` SET `time_start` = NOW() WHERE `id` = 1 LIMIT 1;
 		END IF;
 
-		INSERT INTO `fc_host_activity` (`boinc_host_id`, `package_id`) VALUES (NEW.id, 1);
-		UPDATE `fc_package` SET `status` = 10, `time_end` = NULL WHERE `id` = 1 LIMIT 1;
+		INSERT INTO `fc_host_activity` (`boinc_host_id`, `job_id`) VALUES (NEW.id, 1);
+		UPDATE `fc_job` SET `status` = 10, `time_end` = NULL WHERE `id` = 1 LIMIT 1;
 	END IF;
 END
 //
 DELIMITER ;
 
 --
--- When timeout is reached, set job to retry and host to benchmark
+-- When timeout is reached, set workunit to retry and host to benchmark
 --
 DROP TRIGGER IF EXISTS `timeout_v1`;
 DELIMITER //
@@ -129,8 +129,8 @@ CREATE TRIGGER `timeout_v1` AFTER UPDATE ON `result`
  FOR EACH ROW BEGIN
 	IF (NEW.server_state = 5 AND OLD.server_state != 5 AND UNIX_TIMESTAMP() >= NEW.report_deadline)
 	THEN
-		UPDATE `fc_job` SET `retry` = 1 WHERE `workunit_id` = NEW.workunitid LIMIT 1 ; 
-        UPDATE `fc_host` SET `status` = 0, `power` = 0 WHERE id IN (SELECT `host_id` FROM `fc_job` WHERE `workunit_id` = NEW.workunitid) LIMIT 1;
+		UPDATE `fc_workunit` SET `retry` = 1 WHERE `workunit_id` = NEW.workunitid LIMIT 1 ;
+        UPDATE `fc_host` SET `status` = 0, `power` = 0 WHERE id IN (SELECT `host_id` FROM `fc_workunit` WHERE `workunit_id` = NEW.workunitid) LIMIT 1;
 	END IF;
 END
 //

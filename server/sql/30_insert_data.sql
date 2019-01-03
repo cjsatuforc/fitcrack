@@ -2,7 +2,7 @@
 -- Insert default settings row
 --
 
-INSERT INTO `fc_settings` (`delete_finished_jobs`, `default_seconds_per_job`, `default_replicate_factor`, `default_verify_hash_format`, `default_check_hashcache`, `default_job_timeout_factor`, `default_bench_all`) VALUES
+INSERT INTO `fc_settings` (`delete_finished_workunits`, `default_seconds_per_workunit`, `default_replicate_factor`, `default_verify_hash_format`, `default_check_hashcache`, `default_workunit_timeout_factor`, `default_bench_all`) VALUES
 (0, 3600, 1, 1, 1, 48, 1);
 
 
@@ -42,7 +42,7 @@ INSERT INTO `fc_dictionary` (`id`, `name`, `path`, `keyspace`, `time`, `deleted`
 -- Insert default hashes
 --
 
-INSERT INTO `fc_hash` (`id`, `package_id`, `hash_type`, `hash`, `result`, `added`, `time_cracked`) VALUES
+INSERT INTO `fc_hash` (`id`, `job_id`, `hash_type`, `hash`, `result`, `added`, `time_cracked`) VALUES
 (1,	2,	0,	'000405dbc07c3b595fc87031af6f9879',	NULL,	'2018-08-18 12:00:00',	NULL),
 (2,	2,	0,	'001e99bd69f0a582d39cca7284b60784',	NULL,	'2018-08-18 12:00:00',	NULL),
 (3,	2,	0,	'0021ca52049c734ac0d3d6f92042abf7',	NULL,	'2018-08-18 12:00:00',	NULL),
@@ -6564,7 +6564,7 @@ INSERT INTO `fc_hcstats` (`id`, `name`, `path`, `time`, `deleted`) VALUES
 -- Insert default masks
 --
 
-INSERT INTO `fc_mask` (`id`, `package_id`, `mask`, `current_index`, `keyspace`, `hc_keyspace`) VALUES
+INSERT INTO `fc_mask` (`id`, `job_id`, `mask`, `current_index`, `keyspace`, `hc_keyspace`) VALUES
 (1,	4,	'?l',	0,	26,	1),
 (2,	4,	'?l?l',	0,	676,	26),
 (3,	4,	'?l?l?l',	0,	17576,	676),
@@ -6588,11 +6588,11 @@ INSERT INTO `fc_masks_set` (`id`, `name`, `path`, `time`, `deleted`) VALUES
 
 
 --
--- Insert default BENCH_ALL package and sample packages
+-- Insert default BENCH_ALL job and sample jobs
 --
 
-INSERT INTO `fc_package` (`id`, `token`, `attack`, `attack_mode`, `attack_submode`, `hash_type`, `hash`, `status`, `result`, `keyspace`, `hc_keyspace`, `indexes_verified`, `current_index`, `current_index_2`, `time`, `name`, `comment`, `time_start`, `time_end`, `cracking_time`, `seconds_per_job`, `config`, `dict1`, `dict2`, `charset1`, `charset2`, `charset3`, `charset4`, `rules`, `rule_left`, `rule_right`, `markov_hcstat`, `markov_threshold`, `replicate_factor`, `deleted`) VALUES
-(1, 'ad97b17dc57f0b4ab480bf57bea0f2e301ab4725386e12b9521ab86efb36f8d9', 'mask', 3, 0, 0, '', 0, NULL, 0, 0, 0, 0, 0, NULL, 'BENCH_ALL', 'This is default package for benchmarking all hosts.', NULL, NULL, 0, 3600, '|||attack_mode|UInt|1|3|||\n|||name|String|7|Test DB|||\n', '', '', '', '', '', '', NULL, '', '', NULL, 0, 1, true),
+INSERT INTO `fc_job` (`id`, `token`, `attack`, `attack_mode`, `attack_submode`, `hash_type`, `hash`, `status`, `result`, `keyspace`, `hc_keyspace`, `indexes_verified`, `current_index`, `current_index_2`, `time`, `name`, `comment`, `time_start`, `time_end`, `cracking_time`, `seconds_per_workunit`, `config`, `dict1`, `dict2`, `charset1`, `charset2`, `charset3`, `charset4`, `rules`, `rule_left`, `rule_right`, `markov_hcstat`, `markov_threshold`, `replicate_factor`, `deleted`) VALUES
+(1, 'ad97b17dc57f0b4ab480bf57bea0f2e301ab4725386e12b9521ab86efb36f8d9', 'mask', 3, 0, 0, '', 0, NULL, 0, 0, 0, 0, 0, NULL, 'BENCH_ALL', 'This is default job for benchmarking all hosts.', NULL, NULL, 0, 3600, '|||attack_mode|UInt|1|3|||\n|||name|String|7|Test DB|||\n', '', '', '', '', '', '', NULL, '', '', NULL, 0, 1, true),
 (2, 'f2c0bec0a2cc11e8b0320242ac140005',	'dictionary',	0,	0,	0,	'check hashlist',	0,	NULL,	14623686,	14623686,	0,	0,	0,	'2018-08-18 12:00:00',	'sample-dict-md5-quick ',	'Default hashcat MD5 hashlist',	NULL,	NULL,	0,	120,	'|||attack_mode|UInt|1|0|||\n|||attack_submode|UInt|1|0|||\n|||name|String|22|sample-dict-md5-quick |||\n|||hash_type|UInt|1|0|||\n',	'',	'',	'',	'',	'',	'',	NULL,	'',	'',	'',	0,	1,	0),
 (3, '55214a34a2ce11e889a50242ac140005',	'dictionary',	0,	0,	3200,	'check hashlist',	0,	NULL,	226082,	226082,	0,	0,	0,	'2018-08-18 12:00:00',	'sample-dict-bcrypt',	'',	NULL,	NULL,	0,	60,	'|||attack_mode|UInt|1|0|||\n|||attack_submode|UInt|1|0|||\n|||name|String|18|sample-dict-bcrypt|||\n|||hash_type|UInt|4|3200|||\n',	'',	'',	'',	'',	'',	'',	NULL,	'',	'',	'',	0,	1,	0),
 (4, 'ed5245baa2ce11e885330242ac140005',	'mask',	3,	0,	5000,	'check hashlist',	0,	NULL,	217180147158,	13270583,	0,	0,	0,	'2018-08-18 12:00:00',	'sample-mask-sha3',	'',	NULL,	NULL,	0,	60,	'|||attack_mode|UInt|1|3|||\n|||attack_submode|UInt|1|0|||\n|||name|String|16|sample-mask-sha3|||\n|||hash_type|UInt|4|5000|||\n',	'',	'',	'',	'',	'',	'',	NULL,	'',	'',	'',	0,	1,	0),
@@ -6600,10 +6600,10 @@ INSERT INTO `fc_package` (`id`, `token`, `attack`, `attack_mode`, `attack_submod
 
 
 --
--- Insert default package dictionaries
+-- Insert default job dictionaries
 --
 
-INSERT INTO `fc_package_dictionary` (`id`, `package_id`, `dictionary_id`, `current_index`, `is_left`) VALUES
+INSERT INTO `fc_job_dictionary` (`id`, `job_id`, `dictionary_id`, `current_index`, `is_left`) VALUES
 (1,	2,	1,	0,	1),
 (2,	2,	2,	0,	1),
 (3,	2,	9,	0,	1),
@@ -6627,7 +6627,7 @@ INSERT INTO `fc_rule` (`id`, `name`, `path`, `time`, `deleted`) VALUES
 -- Insert default user ( username: fitcrack , password: FITCRACK)
 --
 
-INSERT INTO `fc_role` (`name`, `MANAGE_USERS`, `ADD_NEW_PACKAGE`, `UPLOAD_DICTIONARIES`, `VIEW_ALL_PACKAGES`, `EDIT_ALL_PACKAGES`, `OPERATE_ALL_PACKAGES`, `ADD_USER_PERMISSIONS_TO_PACKAGE`) VALUES
+INSERT INTO `fc_role` (`name`, `MANAGE_USERS`, `ADD_NEW_JOB`, `UPLOAD_DICTIONARIES`, `VIEW_ALL_JOBS`, `EDIT_ALL_JOBS`, `OPERATE_ALL_JOBS`, `ADD_USER_PERMISSIONS_TO_JOB`) VALUES
 ('admin', 1, 1, 1, 1, 1, 1, 1);
 
 INSERT INTO `fc_user` (`username`, `password`, `mail`, `role_id`, `deleted`) VALUES

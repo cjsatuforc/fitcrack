@@ -90,7 +90,7 @@ CREATE TABLE IF NOT EXISTS `fc_hashcache` (
 
 CREATE TABLE IF NOT EXISTS`fc_hash` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `package_id` bigint(20) unsigned NOT NULL,
+  `job_id` bigint(20) unsigned NOT NULL,
   `hash_type` int(11) unsigned NOT NULL,
   `hash` blob NOT NULL,
   `result` longtext DEFAULT NULL,
@@ -124,7 +124,7 @@ CREATE TABLE IF NOT EXISTS `fc_host` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `boinc_host_id` bigint(20) unsigned NOT NULL,
   `power` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `package_id` bigint(20) unsigned NOT NULL,
+  `job_id` bigint(20) unsigned NOT NULL,
   `status` smallint(1) unsigned NOT NULL DEFAULT '0',
   `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
@@ -139,19 +139,19 @@ CREATE TABLE IF NOT EXISTS `fc_host` (
 CREATE TABLE IF NOT EXISTS `fc_host_activity` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `boinc_host_id` bigint(20) unsigned NOT NULL,
-  `package_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `job_id` bigint(20) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
 --
--- Štruktúra tabuľky pre tabuľku `fc_job`
+-- Štruktúra tabuľky pre tabuľku `fc_workunit`
 --
 
-CREATE TABLE IF NOT EXISTS `fc_job` (
+CREATE TABLE IF NOT EXISTS `fc_workunit` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `package_id` bigint(20) NOT NULL,
+  `job_id` bigint(20) NOT NULL,
   `workunit_id` bigint(20) unsigned NOT NULL,
   `host_id` bigint(20) unsigned NOT NULL,
   `boinc_host_id` bigint(20) unsigned NOT NULL,
@@ -178,7 +178,7 @@ CREATE TABLE IF NOT EXISTS `fc_job` (
 
 CREATE TABLE IF NOT EXISTS `fc_mask` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `package_id` bigint(20) unsigned NOT NULL,
+  `job_id` bigint(20) unsigned NOT NULL,
   `mask` varchar(30) COLLATE utf8_bin DEFAULT NULL,
   `current_index` bigint(20) unsigned NOT NULL,
   `keyspace` bigint(20) unsigned NOT NULL,
@@ -240,10 +240,10 @@ CREATE TABLE IF NOT EXISTS `fc_protected_file` (
 -- --------------------------------------------------------
 
 --
--- Štruktúra tabuľky pre tabuľku `fc_package`
+-- Štruktúra tabuľky pre tabuľku `fc_job`
 --
 
-CREATE TABLE IF NOT EXISTS `fc_package` (
+CREATE TABLE IF NOT EXISTS `fc_job` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `token` varchar(64) COLLATE utf8_bin DEFAULT NULL,
   `attack` varchar(40) COLLATE utf8_bin NOT NULL,
@@ -264,7 +264,7 @@ CREATE TABLE IF NOT EXISTS `fc_package` (
   `time_start` timestamp NULL DEFAULT NULL,
   `time_end` timestamp NULL DEFAULT NULL,
   `cracking_time` double NOT NULL DEFAULT '0',
-  `seconds_per_job` bigint(20) unsigned NOT NULL DEFAULT '3600',
+  `seconds_per_workunit` bigint(20) unsigned NOT NULL DEFAULT '3600',
   `config` longtext COLLATE utf8_bin NOT NULL,
   `dict1` varchar(255) COLLATE utf8_bin NOT NULL,
   `dict2` varchar(255) COLLATE utf8_bin NOT NULL,
@@ -285,12 +285,12 @@ CREATE TABLE IF NOT EXISTS `fc_package` (
 -- --------------------------------------------------------
 
 --
--- Štruktúra tabuľky pre tabuľku `fc_package_dictionary`
+-- Štruktúra tabuľky pre tabuľku `fc_job_dictionary`
 --
 
-CREATE TABLE `fc_package_dictionary` (
+CREATE TABLE `fc_job_dictionary` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `package_id` bigint(20) unsigned NOT NULL,
+  `job_id` bigint(20) unsigned NOT NULL,
   `dictionary_id` bigint(20) unsigned NOT NULL,
   `current_index` bigint(20) unsigned NOT NULL DEFAULT '0',
   `is_left` tinyint(1) unsigned NOT NULL DEFAULT '1',
@@ -300,16 +300,16 @@ CREATE TABLE `fc_package_dictionary` (
 -- --------------------------------------------------------
 
 --
--- Štruktúra tabuľky pre tabuľku `fc_package_graph`
+-- Štruktúra tabuľky pre tabuľku `fc_job_graph`
 --
 
-CREATE TABLE IF NOT EXISTS `fc_package_graph` (
+CREATE TABLE IF NOT EXISTS `fc_job_graph` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `progress` decimal(5,2) NOT NULL,
-  `package_id` bigint(20) unsigned NOT NULL,
+  `job_id` bigint(20) unsigned NOT NULL,
   `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  KEY `package_id` (`package_id`)
+  KEY `job_id` (`job_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
@@ -322,12 +322,12 @@ CREATE TABLE IF NOT EXISTS `fc_role` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
   `MANAGE_USERS` tinyint(1) NOT NULL DEFAULT '0',
-  `ADD_NEW_PACKAGE` tinyint(1) NOT NULL DEFAULT '0',
+  `ADD_NEW_JOB` tinyint(1) NOT NULL DEFAULT '0',
   `UPLOAD_DICTIONARIES` tinyint(1) NOT NULL DEFAULT '0',
-  `VIEW_ALL_PACKAGES` tinyint(1) NOT NULL DEFAULT '0',
-  `EDIT_ALL_PACKAGES` tinyint(1) NOT NULL DEFAULT '0',
-  `OPERATE_ALL_PACKAGES` tinyint(1) NOT NULL DEFAULT '0',
-  `ADD_USER_PERMISSIONS_TO_PACKAGE` tinyint(1) NOT NULL DEFAULT '0',
+  `VIEW_ALL_JOBS` tinyint(1) NOT NULL DEFAULT '0',
+  `EDIT_ALL_JOBS` tinyint(1) NOT NULL DEFAULT '0',
+  `OPERATE_ALL_JOBS` tinyint(1) NOT NULL DEFAULT '0',
+  `ADD_USER_PERMISSIONS_TO_JOB` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1 ;
 
@@ -354,12 +354,12 @@ CREATE TABLE IF NOT EXISTS `fc_rule` (
 
 CREATE TABLE IF NOT EXISTS `fc_settings` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `delete_finished_jobs` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `default_seconds_per_job` int(10) unsigned NOT NULL DEFAULT '3600',
+  `delete_finished_workunits` tinyint(1) unsigned NOT NULL DEFAULT '0',
+  `default_seconds_per_workunit` int(10) unsigned NOT NULL DEFAULT '3600',
   `default_replicate_factor` int(10) unsigned NOT NULL DEFAULT '1',
   `default_verify_hash_format` tinyint(1) unsigned NOT NULL DEFAULT '1',
   `default_check_hashcache` tinyint(3) unsigned NOT NULL DEFAULT '1',
-  `default_job_timeout_factor` int(10) unsigned NOT NULL DEFAULT '6',
+  `default_workunit_timeout_factor` int(10) unsigned NOT NULL DEFAULT '6',
   `default_bench_all` tinyint(1) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
@@ -389,13 +389,13 @@ CREATE TABLE IF NOT EXISTS `fc_user` (
 
 CREATE TABLE IF NOT EXISTS `fc_user_permissions` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `package_id` bigint(20) unsigned NOT NULL,
+  `job_id` bigint(20) unsigned NOT NULL,
   `user_id` int(11) NOT NULL,
   `view` tinyint(1) NOT NULL DEFAULT '0',
   `modify` tinyint(1) NOT NULL DEFAULT '0',
   `operate` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
-  KEY `package_id` (`package_id`),
+  KEY `job_id` (`job_id`),
   KEY `user_id` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1 ;
 
@@ -424,13 +424,13 @@ CREATE TABLE IF NOT EXISTS `fc_host_status` (
 --
 ALTER TABLE `fc_notification`
   ADD CONSTRAINT `fc_notification_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `fc_user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fc_notification_ibfk_2` FOREIGN KEY (`source_id`) REFERENCES `fc_package` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fc_notification_ibfk_2` FOREIGN KEY (`source_id`) REFERENCES `fc_job` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Obmedzenie pre tabuľku `fc_package_graph`
+-- Obmedzenie pre tabuľku `fc_job_graph`
 --
-ALTER TABLE `fc_package_graph`
-  ADD CONSTRAINT `fc_package_graph_ibfk_1` FOREIGN KEY (`package_id`) REFERENCES `fc_package` (`id`);
+ALTER TABLE `fc_job_graph`
+  ADD CONSTRAINT `fc_job_graph_ibfk_1` FOREIGN KEY (`job_id`) REFERENCES `fc_job` (`id`);
 
 --
 -- Obmedzenie pre tabuľku `fc_user`
@@ -442,7 +442,7 @@ ALTER TABLE `fc_user`
 -- Obmedzenie pre tabuľku `fc_user_permissions`
 --
 ALTER TABLE `fc_user_permissions`
-  ADD CONSTRAINT `fc_user_permissions_ibfk_1` FOREIGN KEY (`package_id`) REFERENCES `fc_package` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fc_user_permissions_ibfk_1` FOREIGN KEY (`job_id`) REFERENCES `fc_job` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fc_user_permissions_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `fc_user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 
