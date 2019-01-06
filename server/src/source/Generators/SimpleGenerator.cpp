@@ -163,20 +163,9 @@ void CSimpleGenerator::createRegularJob(PtrPackage & package, PtrHost & host)
     }
 
     /** Try to set a job from retry */
-    bool retryFlag = setEasiestRetry(package, host, attack);
+    setEasiestRetry(package, host, attack);
 
-    /** If package is finishing and there are no retries -> set host to Done */
-    if (package->getStatus() == Config::PackageState::PackageFinishing && !retryFlag)
-    {
-        Tools::printDebugHost(Config::DebugType::Log, packageId, hostBoincId,
-                "No more retry jobs available. Setting host to done\n");
-
-        /** No jobs to be done, set host to done */
-        /** @warning Race condition possible: If one job is remaining, all hosts are set to done and then, the one
-         * remaining host disconnects, there is nobody left to do the job! */
-        host->updateStatus(Config::HostState::HostDone);
-    }
-    else if (!attack->makeJob())
+    if (!attack->makeJob() && package->getStatus() != Config::PackageState::PackageFinishing)
     {
         /** No job could be generated, setting package to finishing */
         Tools::printDebugPackage(Config::DebugType::Log, packageId,
