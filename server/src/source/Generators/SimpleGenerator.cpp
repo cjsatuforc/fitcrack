@@ -163,9 +163,14 @@ void CSimpleGenerator::createRegularJob(PtrPackage & package, PtrHost & host)
     }
 
     /** Try to set a job from retry */
-    setEasiestRetry(package, host, attack);
+    bool retryFlag = setEasiestRetry(package, host, attack);
 
-    if (!attack->makeJob() && package->getStatus() != Config::PackageState::PackageFinishing)
+    if (package->getStatus() == Config::PackageState::PackageFinishing && !retryFlag)
+    {
+        Tools::printDebugHost(Config::DebugType::Log, packageId, hostBoincId,
+                              "No more retry jobs available. Job will end soon.\n");
+    }
+    else if (!attack->makeJob() && package->getStatus() != Config::PackageState::PackageFinishing)
     {
         /** No job could be generated, setting package to finishing */
         Tools::printDebugPackage(Config::DebugType::Log, packageId,
