@@ -193,7 +193,7 @@ void CSimpleGenerator::finishPackage(PtrPackage & package)
                 "Timeouted package has finished all jobs. Setting state to timeout.\n", packageId);
         package->updateStatusOfRunningPackage(Config::PackageState::PackageTimeout);
     }
-    else if ((attackMode == Config::AttackMode::AttackCombinator && (package->getCurrentIndex() >= package->getKeyspace())) ||
+    else if ((attackMode == Config::AttackMode::AttackCombinator && (package->getCurrentIndex() * package->getHcKeyspace() >= package->getKeyspace())) ||
              (attackMode != Config::AttackMode::AttackCombinator && (package->getCurrentIndex() >= package->getHcKeyspace())))
     {
         if (m_sqlLoader->isAnythingCracked(packageId))
