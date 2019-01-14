@@ -1,3 +1,8 @@
+/*
+   * Author : see AUTHORS
+   * Licence: MIT, see LICENSE
+*/
+
 window.serverAddress = 'http://localhost:5000'
 
 window.theme = {
