@@ -68,7 +68,7 @@ new Vue({
           'mail': null,
           'role': {
             'MANAGE_USERS': true,
-            'ADD_NEW_PACKAGE': true,
+            'ADD_NEW_JOB': true,
             'UPLOAD_DICTIONARIES': true,
             'VIEW_ALL_PACKAGES': true,
             'EDIT_ALL_PACKAGES': true,

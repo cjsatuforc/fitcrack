@@ -130,7 +130,7 @@ package_model = api.model('Package', {
     'current_index_2': fields.String(required=True, default='0'),
     'time_start': fields.String(required=True),
     'time_end': fields.String(required=True),
-    'seconds_per_job': fields.String(required=True, default='0'),
+    'seconds_per_job': fields.String(attribute='seconds_per_workunit',required=True, default='0'),
     'dict1': fields.String(required=True),
     'dictionary1': fields.Nested(dictionary_model),
     'dict2': fields.String(required=True),

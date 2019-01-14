@@ -13,7 +13,7 @@ const UserPlugin = {
           'mail': null,
           'role': {
             'MANAGE_USERS': false,
-            'ADD_NEW_PACKAGE': false,
+            'ADD_NEW_JOB': false,
             'UPLOAD_DICTIONARIES': false,
             'VIEW_ALL_PACKAGES': false,
             'EDIT_ALL_PACKAGES': false,
@@ -60,7 +60,7 @@ const UserPlugin = {
     };
 
     Vue.prototype.$userCanAddJob = function () {
-      return this.$store.user.userData.role.ADD_NEW_PACKAGE
+      return this.$store.user.userData.role.ADD_NEW_JOB
     }
 
     Vue.prototype.$error = function (message) {

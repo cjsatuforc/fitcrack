@@ -6,9 +6,6 @@
 <template>
   <v-container class="max500">
     <fc-tile title="Charsets" class="ma-2">
-      <v-alert :value="true" type="warning" class="mt-0 mb-0" >
-        We do not support charsets yet.
-      </v-alert>
       <v-alert :value="true" type="warning" class="mt-0 mb-1" >
         Charsets must have a .txt, .hcchr or .charset extension.
       </v-alert>

@@ -122,10 +122,10 @@ def process_package_3(package, hashcatKeyspace=True):
     # charsets
     hashcatArgs = ''
     charsetsSize = []
-    if package['job_settings'].get('charset'):
-        if len(package['job_settings']['charset']) > 4:
+    if package['attack_settings'].get('charset'):
+        if len(package['attack_settings']['charset']) > 4:
             abort(500, 'Maximum of charsets files is 4.')
-        for i, charset in enumerate(package['job_settings']['charset'], 1):
+        for i, charset in enumerate(package['attack_settings']['charset'], 1):
             charsetPath = os.path.join(CHARSET_DIR, charset['name'])
             charsetsSize = dict()
             with open(charsetPath, 'rb') as f:

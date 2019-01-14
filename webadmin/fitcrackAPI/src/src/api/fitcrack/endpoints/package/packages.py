@@ -117,7 +117,7 @@ class PackageByID(Resource):
 
         package.name = args['name']
         package.comment = args['comment']
-        package.seconds_per_job = args['seconds_per_job']
+        package.seconds_per_workunit = args['seconds_per_job']
         package.time_start = datetime.datetime.now() if not args['time_start'] else datetime.datetime.strptime(args['time_start'], '%d/%m/%Y %H:%M'),
         package.time_end = None if not args['time_end'] else datetime.datetime.strptime(args['time_end'], '%d/%m/%Y %H:%M')
 

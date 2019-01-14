@@ -40,9 +40,9 @@ def computePackagesGraph(fromDate=None, toDate=None, packageId=None):
     packagesGraphData.order_by(desc(FcJobGraph.id))
     for packageProgress in packagesGraphData:
         data.append(packageProgress.as_graph())
-        if not packageProgress.package.id in y:
-            y.add(packageProgress.package.id)
-            labels.insert(0, packageProgress.package.name)
+        if not packageProgress.job.id in y:
+            y.add(packageProgress.JOB.id)
+            labels.insert(0, packageProgress.JOB.name)
 
     if not packageId and not toDate:
         data.append({'time': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")})

@@ -95,7 +95,7 @@ def create_package(data):
         time_start=None if not package['time_start'] else  datetime.datetime.strptime(package['time_start'], '%d/%m/%Y %H:%M'),
         time_end=None if not package['time_end'] else datetime.datetime.strptime(package['time_end'], '%d/%m/%Y %H:%M'),
         cracking_time='0',
-        seconds_per_job=package['seconds_per_job'] if package['seconds_per_job'] > 60 else 60,
+        seconds_per_workunit=package['seconds_per_job'] if package['seconds_per_job'] > 60 else 60,
         config=package['config'],
         dict1=package['dict1'] if package.get('dict1') else '',
         dict2=package['dict2'] if package.get('dict2') else '',
