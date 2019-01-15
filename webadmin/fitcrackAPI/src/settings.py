@@ -8,8 +8,8 @@ import os
 # HashCat settings
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 HASHCAT_EXECUTABLE = 'hashcat64.bin'
-HASHCAT_PATH = ROOT_DIR + '/../hashcat-4.2.0/' + HASHCAT_EXECUTABLE
-HASHCAT_DIR = ROOT_DIR + '/../hashcat-4.2.0/'
+HASHCAT_PATH = ROOT_DIR + '/../hashcat-4.2.1/' + HASHCAT_EXECUTABLE
+HASHCAT_DIR = ROOT_DIR + '/../hashcat-4.2.1/'
 HASHCAT_UTILS_PATH =  ROOT_DIR + '/../hashcat-utils/bin'
 MASK_PROCESSOR_PATH = ROOT_DIR + '/../maskprocessor/mp64.bin'
 EXE_OR_BIN = 'bin'
@@ -49,6 +49,3 @@ SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root@localhost/fitcrack'
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 BOINC_SERVER_URI = 'https://fitcrack.fit.vutbr.cz'
-
-
-
