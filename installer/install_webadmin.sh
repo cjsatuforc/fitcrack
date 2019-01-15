@@ -126,7 +126,7 @@ fi
 # Get back-end TCP port #
 #########################
 
-read -e -p "Enter a port for front-end to listen on (default: 5000): " BACKEND_PORT
+read -e -p "Enter a port for back-end to listen on (default: 5000): " BACKEND_PORT
 BACKEND_PORT=${BACKEND_PORT:-5000}
 
 if lsof -Pi :$BACKEND_PORT -sTCP:LISTEN -t >/dev/null ; then
