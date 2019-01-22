@@ -17,7 +17,7 @@
         <template slot="items" slot-scope="props">
           <td>{{ props.item.name }}</td>
           <td class="text-xs-right">{{ props.item.hash }}</td>
-          <td class="text-xs-right">{{ $moment(props.item.time ).calendar() }}</td>
+          <td class="text-xs-right">{{ $moment(props.item.time ).format('DD.MM.YYYY HH:mm') }}</td>
           <td class="text-xs-right">
             <a :href="$serverAddr + '/protectedFiles/' + props.item.id" target="_blank">
             <v-btn outline fab small color="primary">

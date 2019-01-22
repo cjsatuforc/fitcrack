@@ -22,7 +22,7 @@
           ></v-checkbox>
         </td>
         <td>{{ props.item.name }}</td>
-        <td class="text-xs-right">{{ $moment(props.item.time ).calendar() }}</td>
+        <td class="text-xs-right">{{ $moment(props.item.time ).format('DD.MM.YYYY HH:mm') }}</td>
       </tr>
     </template>
   </v-data-table>

@@ -24,7 +24,7 @@
           <template slot="items" slot-scope="props">
             <td>{{ props.item.dictionary.name }}</td>
             <td class="text-xs-right">{{ props.item.dictionary.keyspace }}</td>
-            <td class="text-xs-right">{{ $moment(props.item.dictionary.time ).calendar() }}</td>
+            <td class="text-xs-right">{{ $moment(props.item.dictionary.time ).format('DD.MM.YYYY HH:mm') }}</td>
             <td class="text-xs-right">
               <v-tooltip top>
                 <v-btn icon class="mx-0" :to="{name: 'dictionaryDetail', params: { id: props.item.dictionary.id}}" slot="activator">
@@ -53,7 +53,7 @@
           <template slot="items" slot-scope="props">
             <td>{{ props.item.dictionary.name }}</td>
             <td class="text-xs-right">{{ props.item.dictionary.keyspace }}</td>
-            <td class="text-xs-right">{{ $moment(props.item.dictionary.time ).calendar() }}</td>
+            <td class="text-xs-right">{{ $moment(props.item.dictionary.time ).format('DD.MM.YYYY HH:mm') }}</td>
             <td class="text-xs-right">
               <v-tooltip top>
                 <v-btn icon class="mx-0" :to="{name: 'dictionaryDetail', params: { id: props.item.dictionary.id}}" slot="activator">

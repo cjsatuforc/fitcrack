@@ -21,7 +21,7 @@
           <td>
             <router-link :to="{name: 'charsetDetail', params: { id: props.item.id}}">{{ props.item.name }}</router-link>
           </td>
-          <td class="text-xs-right">{{ $moment(props.item.time ).calendar() }}</td>
+          <td class="text-xs-right">{{ $moment(props.item.time ).format('DD.MM.YYYY HH:mm') }}</td>
           <td class="text-xs-right">
             <a :href="$serverAddr + '/charset/' + props.item.id + '/download'" target="_blank">
               <v-btn outline fab small color="primary">

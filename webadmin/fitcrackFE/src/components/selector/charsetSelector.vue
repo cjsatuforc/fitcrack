@@ -24,7 +24,7 @@
           ></v-checkbox>
         </td>
         <td>{{ props.item.name }}</td>
-        <td class="text-xs-right">{{ $moment(props.item.time ).calendar() }}</td>
+        <td class="text-xs-right">{{ $moment(props.item.time ).format('DD.MM.YYYY HH:mm') }}</td>
         <td class="text-xs-right">
           <v-tooltip top>
             <v-btn icon class="mx-0" :to="{name: 'charsetDetail', params: { id: props.item.id}}" slot="activator">
