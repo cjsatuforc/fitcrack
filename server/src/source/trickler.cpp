@@ -1,5 +1,5 @@
 /**
- * @file teserakt_trickler.cpp
+ * @file trickler.cpp
  * @brief Source file for parsing trickle messages from hosts
  * @authors Lukas Zobal (zobal.lukas(at)gmail.com)
  * @date 12. 12. 2018
