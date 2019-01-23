@@ -26,9 +26,9 @@ def log_parser(log):
         result['type'] = 'WARN'
         result['time'] = datetime.strptime(log[6:25], '%d.%m.%Y %H:%M:%S')
 
-    m = re.match(r"(.*)(\[Package #(?P<package_id>\w+)])(\[Host #(?P<host_id>\w+)])? (?P<msg>(.*))", log)
+    m = re.match(r"(.*)(\[Package #(?P<job_id>\w+)])(\[Host #(?P<host_id>\w+)])? (?P<msg>(.*))", log)
     regexDict = m.groupdict()
-    result['package'] = regexDict['package_id']
+    result['package'] = regexDict['job_id']
     result['host'] = regexDict['host_id']
     result['log'] = regexDict['msg']
 

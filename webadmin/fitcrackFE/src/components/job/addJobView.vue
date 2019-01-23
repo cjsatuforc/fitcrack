@@ -316,7 +316,7 @@
 
             >Submit
             </v-btn>
-            <template-modal :data="sendingJson"></template-modal>
+            <!--<template-modal :data="sendingJson"></template-modal>-->
           </v-layout>
 
         </v-form>

@@ -47,7 +47,16 @@
           <router-link :to="{ name: 'jobDetail', params: { id: props.item.id}}" class="middle">{{ props.item.name }}</router-link>
         </td>
         <td class="text-xs-right">{{ props.item.attack }}</td>
-        <td class="text-xs-right" v-bind:class="props.item.status_type + '--text'">{{ props.item.status_text }}</td>
+        <td class="text-xs-right" v-bind:class="props.item.status_type + '--text'">
+          <v-tooltip top>
+            <span
+              slot="activator"
+            >
+              {{ props.item.status_text }}
+            </span>
+            <span>{{ props.item.status_tooltip }}</span>
+          </v-tooltip>
+        </td>
         <td class="text-xs-right">
           <v-progress-circular
             size="35"
@@ -61,7 +70,6 @@
           </v-progress-circular>
         </td>
         <td class="text-xs-right">{{ $moment(props.item.time).format('D.M.YYYY H:mm:ss') }}</td>
-        <td class="text-xs-right">{{ props.item.password }}</td>
         <td>
           <div class="d-flex text-xs-right actionsBtns">
             <v-tooltip top>
@@ -191,7 +199,6 @@
           {text: 'Status', value: 'status', align: 'right'},
           {text: 'Progress', value: 'progress', align: 'right'},
           {text: 'Added', value: 'time', align: 'right'},
-          {text: 'Result', value: 'password', align: 'right', sortable: false},
           {text: 'Actions', value: 'name', sortable: false, align: 'right'},
           {text: 'Hide', value: 'name', sortable: false, align: 'right', width: "1"}
         ],

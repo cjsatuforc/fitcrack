@@ -111,7 +111,7 @@ class role(Resource):
         args = change_role_arguments.parse_args(request)
         role = FcRole.query.filter_by(id=id).one()
         if not hasattr(role, args['key']):
-            abort(400, 'Unknow permission ' + args['key'])
+            abort(400, 'Unknown permission ' + args['key'])
         setattr(role, args['key'], args['value'])
         db.session.commit()
         return {

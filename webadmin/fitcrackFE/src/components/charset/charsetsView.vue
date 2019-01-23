@@ -6,9 +6,6 @@
 <template>
   <v-container class="max500">
     <fc-tile title="Charsets" class="ma-2">
-      <v-alert :value="true" type="warning" class="mt-0 mb-0" >
-        We do not support charsets yet.
-      </v-alert>
       <v-alert :value="true" type="warning" class="mt-0 mb-1" >
         Charsets must have a .txt, .hcchr or .charset extension.
       </v-alert>
@@ -24,7 +21,7 @@
           <td>
             <router-link :to="{name: 'charsetDetail', params: { id: props.item.id}}">{{ props.item.name }}</router-link>
           </td>
-          <td class="text-xs-right">{{ $moment(props.item.time ).calendar() }}</td>
+          <td class="text-xs-right">{{ $moment(props.item.time ).format('DD.MM.YYYY HH:mm') }}</td>
           <td class="text-xs-right">
             <a :href="$serverAddr + '/charset/' + props.item.id + '/download'" target="_blank">
               <v-btn outline fab small color="primary">

@@ -46,7 +46,7 @@
               </v-list-tile-action>
               <v-list-tile-content>
                 <v-list-tile-title class="text-xs-right">
-                  {{ $moment(info.time).calendar() }}
+                  {{ $moment(info.time).format('DD.MM.YYYY HH:mm') }}
                 </v-list-tile-title>
               </v-list-tile-content>
             </v-list-tile>

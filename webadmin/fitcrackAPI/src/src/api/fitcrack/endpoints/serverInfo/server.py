@@ -49,11 +49,10 @@ class serverInfo(Resource):
 
         result = []
         for deamon in tree:
-            if deamon.find('host').text == PROJECT_NAME:
-                result.append({
-                    'name': deamon.find('command').text,
-                    'status': deamon.find('status').text
-                })
+            result.append({
+                'name': deamon.find('command').text,
+                'status': deamon.find('status').text
+            })
 
         return {'subsystems': result}
 

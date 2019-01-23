@@ -19,7 +19,7 @@
             <router-link :to="{name: 'dictionaryDetail', params: { id: props.item.id}}">{{ props.item.name }}</router-link>
           </td>
           <td class="text-xs-right">{{ props.item.keyspace }}</td>
-          <td class="text-xs-right">{{ $moment(props.item.time ).calendar() }}</td>
+          <td class="text-xs-right">{{ $moment(props.item.time ).format('DD.MM.YYYY HH:mm') }}</td>
           <td class="text-xs-right">
             <v-tooltip top>
               <v-btn icon class="mx-0" @click="deleteDictionary(props.item.id)" slot="activator">

@@ -58,32 +58,8 @@
         <template slot="items" slot-scope="props">
           <td>{{ props.item.name }}</td>
           <td class="text-xs-right">
-            <v-checkbox @change="roleChange($event, props.item.id, 'MANAGE_USERS')"
-                        v-model="props.item.MANAGE_USERS"></v-checkbox>
-          </td>
-          <td class="text-xs-right">
-            <v-checkbox @change="roleChange($event, props.item.id, 'ADD_NEW_PACKAGE')"
-                        v-model="props.item.ADD_NEW_PACKAGE"></v-checkbox>
-          </td>
-          <td class="text-xs-right">
-            <v-checkbox @change="roleChange($event, props.item.id, 'UPLOAD_DICTIONARIES')"
-                        v-model="props.item.UPLOAD_DICTIONARIES"></v-checkbox>
-          </td>
-          <td class="text-xs-right">
-            <v-checkbox @change="roleChange($event, props.item.id, 'VIEW_ALL_PACKAGES')"
-                        v-model="props.item.VIEW_ALL_PACKAGES"></v-checkbox>
-          </td>
-          <td class="text-xs-right">
-            <v-checkbox @change="roleChange($event, props.item.id, 'EDIT_ALL_PACKAGES')"
-                        v-model="props.item.EDIT_ALL_PACKAGES"></v-checkbox>
-          </td>
-          <td class="text-xs-right">
-            <v-checkbox @change="roleChange($event, props.item.id, 'OPERATE_ALL_PACKAGES')"
-                        v-model="props.item.OPERATE_ALL_PACKAGES"></v-checkbox>
-          </td>
-          <td class="text-xs-right">
-            <v-checkbox @change="roleChange($event, props.item.id, 'ADD_USER_PERMISSIONS_TO_PACKAGE')"
-                        v-model="props.item.ADD_USER_PERMISSIONS_TO_PACKAGE"></v-checkbox>
+            <v-checkbox @change="roleChange($event, props.item.id, 'ADD_NEW_JOB')"
+                        v-model="props.item.ADD_NEW_JOB"></v-checkbox>
           </td>
           <td class="text-xs-right">
             <v-tooltip top>
@@ -287,13 +263,7 @@
             align: 'left',
             value: 'name'
           },
-          {text: 'Manage users type', value: 'MANAGE_USERS', align: 'right'},
-          {text: 'Add new job', value: 'ADD_NEW_PACKAGE', align: 'right'},
-          {text: 'Upload dictionary', value: 'UPLOAD_DICTIONARIES', align: 'right'},
-          {text: 'View all jobs', value: 'VIEW_ALL_PACKAGES', align: 'right'},
-          {text: 'Edit all jobs', value: 'EDIT_ALL_PACKAGES', align: 'right'},
-          {text: 'Operate all jobs', value: 'OPERATE_ALL_PACKAGES', align: 'right'},
-          {text: 'Add user permissions to package', value: 'ADD_USER_PERMISSIONS_TO_PACKAGE', align: 'right'},
+          {text: 'Add new job', value: 'ADD_NEW_JOB', align: 'left'},
           {text: '', value: 'id', align: 'right'}
         ],
         userRoles: [],
@@ -318,7 +288,7 @@
   }
 
   .roleTable {
-    max-width: 1400px;
+    max-width: 500px;
     margin: auto;
   }
 

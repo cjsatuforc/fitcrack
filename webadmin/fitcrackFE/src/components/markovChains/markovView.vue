@@ -19,7 +19,7 @@
       >
         <template slot="items" slot-scope="props">
           <td>{{ props.item.name }}</td>
-          <td class="text-xs-right">{{ $moment(props.item.time ).calendar() }}</td>
+          <td class="text-xs-right">{{ $moment(props.item.time ).format('DD.MM.YYYY HH:mm') }}</td>
           <td class="text-xs-right">
             <a :href="$serverAddr + '/markovChains/' + props.item.id" target="_blank">
             <v-btn outline fab small color="primary">
@@ -101,7 +101,7 @@
                       v-bind:class="{selectedDict: (props.item.id === selectedDictId)}" >
                     <td>{{ props.item.name }}</td>
                     <td class="text-xs-right">{{ props.item.keyspace }}</td>
-                    <td class="text-xs-right">{{ $moment(props.item.time ).calendar() }}</td>
+                    <td class="text-xs-right">{{ $moment(props.item.time ).format('DD.MM.YYYY HH:mm') }}</td>
                     <td class="text-xs-right">
                       <v-tooltip top>
                         <v-btn icon class="mx-0" :to="{name: 'dictionaryDetail', params: { id: props.item.id}}" slot="activator">

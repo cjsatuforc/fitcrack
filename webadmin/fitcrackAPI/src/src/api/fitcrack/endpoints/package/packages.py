@@ -29,7 +29,7 @@ from src.api.fitcrack.functions import shellExec
 from src.api.fitcrack.lang import statuses, package_status_text_to_code_dict
 from src.api.fitcrack.responseModels import simpleResponse
 from src.database import db
-from src.database.models import FcPackage, FcHost, FcJob, FcHostActivity, FcMask, FcPackageGraph, FcPackageDictionary
+from src.database.models import FcJob, FcHost, FcWorkunit, FcHostActivity, FcMask, FcJobGraph, FcJobDictionary
 
 log = logging.getLogger(__name__)
 
@@ -49,7 +49,7 @@ class packagesCollection(Resource):
         page = args.get('page', 1)
         per_page = args.get('per_page', 10)
 
-        packagess_query = FcPackage.query
+        packagess_query = FcJob.query
 
         if args.showDeleted:
             packagess_query = packagess_query.filter_by(deleted=True)
@@ -57,20 +57,20 @@ class packagesCollection(Resource):
             packagess_query = packagess_query.filter_by(deleted=False)
 
         if args.name:
-            packagess_query = packagess_query.filter(FcPackage.name.like('%' + args.name + '%'))
+            packagess_query = packagess_query.filter(FcJob.name.like('%' + args.name + '%'))
 
         if args.status:
             statusCode = statuses[args.status]
             packagess_query = packagess_query.filter_by(status=statusCode)
 
         if args.order_by:
-            orderBy = getattr(FcPackage, args.order_by)
+            orderBy = getattr(FcJob, args.order_by)
             if args.descending:
                 orderBy = orderBy.desc()
             packagess_query = packagess_query.order_by(orderBy)
 
         else:
-            packagess_query = packagess_query.order_by(FcPackage.id.desc())
+            packagess_query = packagess_query.order_by(FcJob.id.desc())
 
         packages_page = packagess_query.paginate(page, per_page, error_out=True)
         return packages_page
@@ -100,14 +100,14 @@ class PackageByID(Resource):
         """
         Vráti konkrétny package.
         """
-        package = FcPackage.query.filter(FcPackage.id == id).one()
+        package = FcJob.query.filter(FcJob.id == id).one()
         return package
 
     @api.expect(editPackage_argument)
     @api.marshal_with(simpleResponse)
     def put(self, id):
         args = editPackage_argument.parse_args(request)
-        package = FcPackage.query.filter(FcPackage.id == id).one()
+        package = FcJob.query.filter(FcJob.id == id).one()
 
         if args['time_start'] == '':
             args['time_start'] = None
@@ -117,7 +117,7 @@ class PackageByID(Resource):
 
         package.name = args['name']
         package.comment = args['comment']
-        package.seconds_per_job = args['seconds_per_job']
+        package.seconds_per_workunit = args['seconds_per_job']
         package.time_start = datetime.datetime.now() if not args['time_start'] else datetime.datetime.strptime(args['time_start'], '%d/%m/%Y %H:%M'),
         package.time_end = None if not args['time_end'] else datetime.datetime.strptime(args['time_end'], '%d/%m/%Y %H:%M')
 
@@ -148,7 +148,7 @@ class OperationWithPackage(Resource):
         args = packageOperation.parse_args(request)
         action = args.get('operation')
 
-        package = FcPackage.query.filter(FcPackage.id == id).one()
+        package = FcJob.query.filter(FcJob.id == id).one()
         if action == 'start':
             package.status = 10
         elif action == 'stop':
@@ -162,17 +162,17 @@ class OperationWithPackage(Resource):
             package.time_start = None
             package.time_end = None
             if package.attack_mode == 3:
-                masks = FcMask.query.filter(FcMask.package_id == id).all()
+                masks = FcMask.query.filter(FcMask.job_id == id).all()
                 for mask in masks:
                     mask.current_index = 0
             elif package.attack_mode == 0 or package.attack_mode == 1:
-                dictionaries = FcPackageDictionary.query.filter(FcPackageDictionary.package_id == id).all()
+                dictionaries = FcJobDictionary.query.filter(FcJobDictionary.job_id == id).all()
                 for dictionary in dictionaries:
                     dictionary.current_index = 0
-            graphData = FcPackageGraph.query.filter(FcPackageGraph.package_id == id).all()
+            graphData = FcJobGraph.query.filter(FcJobGraph.job_id == id).all()
             for item in graphData:
                 db.session.delete(item)
-            db.session.add(FcPackageGraph(progress=0, package_id=package.id))
+            db.session.add(FcJobGraph(progress=0, job_id=package.id))
         else:
             abort(401, 'Bad operation with job!')
 
@@ -200,7 +200,7 @@ class packagesHost(Resource):
         page = args.get('page', 1)
         per_page = args.get('per_page', 10)
 
-        hosts_query = FcHost.query.filter_by(package_id=id)
+        hosts_query = FcHost.query.filter_by(job_id=id)
 
 
         hosts_page = hosts_query.paginate(page, per_page, error_out=True)
@@ -215,12 +215,12 @@ class packagesHost(Resource):
         """
 
         args = editHostMapping_argument.parse_args(request)
-        beforeHosts = FcHostActivity.query.filter_by(package_id=id).all()
+        beforeHosts = FcHostActivity.query.filter_by(job_id=id).all()
         for host in beforeHosts:
             db.session.delete(host)
 
         for hostId in args['newHost_ids']:
-            host = FcHostActivity(boinc_host_id=hostId, package_id=id)
+            host = FcHostActivity(boinc_host_id=hostId, job_id=id)
             db.session.add(host)
 
         try:
@@ -253,7 +253,7 @@ class packagesJob(Resource):
         page = args.get('page', 1)
         per_page = args.get('per_page', 10)
 
-        jobs_query = FcJob.query.filter_by(package_id=id)
+        jobs_query = FcWorkunit.query.filter_by(job_id=id)
 
 
         jobs_page = jobs_query.paginate(page, per_page, error_out=True)
@@ -314,7 +314,7 @@ class jobsInfo(Resource):
         Vráti info o joboch
         """
 
-        statusesCount = db.session.query(FcPackage.status, func.count(FcPackage.id)).group_by(FcPackage.status).all()
+        statusesCount = db.session.query(FcJob.status, func.count(FcJob.id)).group_by(FcJob.status).all()
         result = []
         for status in statusesCount:
             result.append(

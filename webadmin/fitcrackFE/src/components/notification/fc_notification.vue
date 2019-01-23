@@ -10,7 +10,7 @@
           <v-layout row wrap class="width100">
             <v-flex class="text-xs-left">{{text}}</v-flex>
             <v-spacer></v-spacer>
-            <v-flex class="text-xs-right">{{$moment(time).calendar()}}</v-flex>
+            <v-flex class="text-xs-right">{{$moment(time).format('DD.MM.YYYY HH:mm')}}</v-flex>
           </v-layout>
         </v-alert>
       </v-list-tile>

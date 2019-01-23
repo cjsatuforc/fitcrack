@@ -91,7 +91,14 @@
                   </v-list-tile-action>
                   <v-list-tile-content>
                     <v-list-tile-title v-bind:class="data.status_type + '--text'" class="text-xs-right fw500">
-                      {{data.status_text}}
+                      <v-tooltip top>
+                        <span
+                          slot="activator"
+                        >
+                          {{ data.status_text }}
+                        </span>
+                        <span>{{ data.status_tooltip }}</span>
+                      </v-tooltip>
                     </v-list-tile-title>
                   </v-list-tile-content>
                 </v-list-tile>
@@ -119,7 +126,7 @@
                     Added:
                   </v-list-tile-action>
                   <v-list-tile-content>
-                    <v-list-tile-title class="text-xs-right">{{ $moment(data.time).calendar() }}</v-list-tile-title>
+                    <v-list-tile-title class="text-xs-right">{{ $moment(data.time).format('DD.MM.YYYY HH:mm') }}</v-list-tile-title>
                   </v-list-tile-content>
                 </v-list-tile>
                 <v-divider></v-divider>
@@ -163,7 +170,7 @@
                   <v-list-tile-content>
                     <v-list-tile-title class="text-xs-right">
                       <v-list-tile-title class="text-xs-right">{{(data.time_start !== null) ? (
-                        $moment(data.time_start).calendar()) : 'Not started yet'}}
+                        $moment(data.time_start).format('DD.MM.YYYY HH:mm')) : 'Not started yet'}}
                       </v-list-tile-title>
                     </v-list-tile-title>
                   </v-list-tile-content>
@@ -175,7 +182,7 @@
                   </v-list-tile-action>
                   <v-list-tile-content>
                     <v-list-tile-title class="text-xs-right">{{(data.time_end !== null) ? (
-                      $moment(data.time_end).calendar()) : 'Not set'}}
+                      $moment(data.time_end).format('DD.MM.YYYY HH:mm')) : 'Not set'}}
                     </v-list-tile-title>
                   </v-list-tile-content>
                 </v-list-tile>
@@ -331,7 +338,7 @@
                   </v-progress-circular>
                 </td>
                 <td class="text-xs-right">{{ props.item.cracking_time_str }}</td>
-                <td class="text-xs-right">{{ $moment(props.item.time).calendar() }}</td>
+                <td class="text-xs-right">{{ $moment(props.item.time).format('DD.MM.YYYY HH:mm') }}</td>
                 <td class="text-xs-right">{{ props.item.start_index }}</td>
                 <td class="text-xs-right">{{ props.item.hc_keyspace }}</td>
                 <td class="text-xs-right error--text" v-bind:class="{'success--text': props.item.retry}">{{
@@ -629,7 +636,7 @@
           time_end: this.data.time_end === null ?
             this.$moment().format('DD/MM/YYYY HH:mm') :
             this.$moment(this.data.time_end).format('DD/MM/YYYY HH:mm'),
-          startNow: false,
+          startNow: (this.data.time_start === null),
           endNever: (this.data.time_end === null)
         }
         this.editJobDialog = true
@@ -659,6 +666,7 @@
         this.editHostsDialog = true
         this.axios.get(this.$serverAddr + '/hosts', {
           params: {
+            'all': true,
             'page': this.paginationHost.page,
             'per_page': this.paginationHost.rowsPerPage,
             'order_by': this.paginationHost.sortBy,

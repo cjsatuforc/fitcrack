@@ -11,12 +11,12 @@ role_model = api.model('User role', {
     'id': fields.Integer(readOnly=True, required=False),
     'name': fields.String(),
     'MANAGE_USERS': fields.Boolean(default=False),
-    'ADD_NEW_PACKAGE': fields.Boolean(default=False),
+    'ADD_NEW_JOB': fields.Boolean(default=False),
     'UPLOAD_DICTIONARIES': fields.Boolean(default=False),
-    'VIEW_ALL_PACKAGES': fields.Boolean(default=False),
-    'EDIT_ALL_PACKAGES': fields.Boolean(default=False),
-    'OPERATE_ALL_PACKAGES': fields.Boolean(default=False),
-    'ADD_USER_PERMISSIONS_TO_PACKAGE': fields.Boolean(default=False)
+    'VIEW_ALL_JOBS': fields.Boolean(default=False),
+    'EDIT_ALL_JOBS': fields.Boolean(default=False),
+    'OPERATE_ALL_JOBS': fields.Boolean(default=False),
+    'ADD_USER_PERMISSIONS_TO_JOB': fields.Boolean(default=False)
 })
 
 role_list_model = api.model('User role list', {

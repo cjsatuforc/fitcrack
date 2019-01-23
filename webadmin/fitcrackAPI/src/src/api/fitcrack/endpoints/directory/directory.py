@@ -9,6 +9,7 @@ import os
 from flask_restplus import Resource, abort
 from flask import request
 
+from settings import SERVER_BROWSER_ROOT
 from src.api.apiConfig import api
 from src.api.fitcrack.endpoints.directory.argumentsParser import directory_parser
 from src.api.fitcrack.endpoints.directory.responseModels import directory_model
@@ -39,7 +40,7 @@ class maskCollection(Resource):
         }
         try:
             os.listdir()
-            for entry in os.listdir(args['path']):
+            for entry in os.listdir(os.path.join(SERVER_BROWSER_ROOT, args['path'])):
                 entryPath = os.path.join(args['path'], entry)
                 if os.path.isfile(entryPath):
                     result['files'].append({
@@ -53,4 +54,7 @@ class maskCollection(Resource):
                     })
         except (FileNotFoundError):
             abort(500, 'Folder ' + args['path'] + ' not found.')
+
+        result['folders'].sort(key=lambda x: str.lower(x['name']))
+        result['files'].sort(key=lambda x: str.lower(x['name']))
         return result
