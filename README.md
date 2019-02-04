@@ -3,13 +3,15 @@
 This README describes how to install and run Fitcrack distributed password cracking system.
 There are four ways of deployment:
 
-* Using [Step-by-step guide for Debian 9 / Ubuntu 18.04 LTS](#instdeb) (recommended way)
-* Using [Step-by-step guide for CentOS/RHEL 7](#instcentos) (recommended way)
-* Using [General installation instructions](#instgen)
+* Using installer + [Step-by-step guide for Debian 9 / Ubuntu 18.04 LTS](#instdeb) (recommended way)
+* Using installer + [Step-by-step guide for CentOS/RHEL 7](#instcentos) (recommended way)
+* Using installer + [General installation instructions](#instgen)
 * Manual install:
   * For **BOINC and Fitcrack server**, see [server README](server/README.md)
   * For **Fitcrack WebAdmin**, see [WebAdmin README](webadmin/README.md)
   * For **Custom build of Runner**, see [Runner README](runner/README.md)
+
+Once installed, see how to [Operate the server](#oper)
 
 <a name="instgen"></a>
 ## General installation instructions
@@ -140,7 +142,7 @@ scl enable devtoolset-7 bash
 ./install_fitcrack.sh
 ```
 
-
+<a name="oper"></a>
 ## Operating the server
 
 The **default** login credentials to the WebAdmin are:
