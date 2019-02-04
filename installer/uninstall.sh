@@ -22,23 +22,23 @@ if [ -d "$BOINC_PROJECT_DIR" ]; then
     if [ $CONFIRMED = "y" ]; then
       rm -rf $BOINC_PROJECT_DIR
       echo "Project directory deleted."
+
+      if ! [ -z "$PROJECT_HTTPD_CONF" ]; then
+        echo "Removing BOINC references from $APACHE_CONFIG_FILE ..."
+
+        sed -i "s|IncludeOptional $PROJECT_HTTPD_CONF.*||g" $APACHE_CONFIG_FILE 2>/dev/null
+
+        if [[ $? != 0 ]]; then
+          echo "Failed to remove."
+        else
+          echo "Removed."
+        fi
+      fi
+      echo "Project removed. Restarting Apache..."
+      systemctl restart $APACHE_SERVICE
     fi
   fi
 
-  if ! [ -z "$PROJECT_HTTPD_CONF" ]; then
-    echo "Removing BOINC references from $APACHE_CONFIG_FILE ..."
-
-    sed -i "s|IncludeOptional $PROJECT_HTTPD_CONF.*||g" $APACHE_CONFIG_FILE 2>/dev/null
-
-    if [[ $? != 0 ]]; then
-      echo "Failed to remove."
-    else
-      echo "Removed."
-    fi
-  fi
-
-  echo "Project removed. Restarting Apache..."
-  systemctl restart $APACHE_SERVICE
 fi
 
 ####################
