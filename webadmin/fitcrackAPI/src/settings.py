@@ -48,4 +48,4 @@ RESTPLUS_ERROR_404_HELP = False
 SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root@localhost/fitcrack'
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-BOINC_SERVER_URI = 'https://fitcrack.fit.vutbr.cz'
+BOINC_SERVER_URI = 'http://localhost'
