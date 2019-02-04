@@ -52,8 +52,8 @@ As root, use Fitcrack installer:
 ```
 ./install_fitcrack.sh
 ```
-Or install everything manually (see README.md files for server, webadmin, and runner).
-
+And proceed according to your preferences...
+![Installer](img/insta.png)
 
 <a name="instdeb"></a>
 ## Step-by-step: Install on Debian 9 / Ubuntu 18.04 LTS
