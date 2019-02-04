@@ -18,7 +18,7 @@ HCSTATS_DIR = '/usr/share/collections/markov'
 MASKS_DIR = '/usr/share/collections/masks'
 CHARSET_DIR = '/usr/share/collections/charsets'
 RULE_DIR = '/usr/share/collections/rules'
-PROTECTEDFILES_DIR = ROOT_DIR + '/../encrypted-files'
+PROTECTEDFILES_DIR = '/usr/share/collections/encrypted-files'
 SERVER_BROWSER_ROOT = '/usr/share/collections/'
 
 #XtoHashCat settings

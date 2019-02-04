@@ -52,12 +52,6 @@ cp -Rf server/client_bin/* $BOINC_PROJECT_DIR/apps/fitcrack/1/
 # Copy Fitcrack communication templates
 cp -Rf server/templates/* $BOINC_PROJECT_DIR/templates/
 
-# Add app app_versions
-MYDIR=$(pwd)
-cd $BOINC_PROJECT_DIR
-./bin/xadd
-./bin/update_versions
-cd $MYDIR
 
 #####################
 # !!! IMPORTANT !!! #
@@ -65,6 +59,13 @@ cd $MYDIR
 # Set permissions for BOINC user and BOINC group
 chmod -R g+rwx $BOINC_HOME
 chown -R $BOINC_USER:$BOINC_GROUP $BOINC_HOME/projects
+
+# Add app app_versions
+MYDIR=$(pwd)
+cd $BOINC_PROJECT_DIR
+sudo -u $BOINC_USER ./bin/xadd
+sudo -u $BOINC_USER ./bin/update_versions
+cd $MYDIR
 
 #######################################
 # Include BOINC HTML in Apache config #

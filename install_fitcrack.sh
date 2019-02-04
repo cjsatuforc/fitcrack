@@ -34,17 +34,25 @@ while ! $finished; do
   echo "=============================================================="
   echo "Choose what to do:"
   echo "[1] Install Fitcrack (default)"
-  echo "[2] Remove previous installation"
-  echo "[3] Exit"
+  echo "[2] Update Fitcrack server daemons (requires project restart)"
+  echo "[3] Update Fitcrack WebAdmin (requires Apache restart)"
+  echo "[4] Remove previous installation"
+  echo "[5] Exit"
   echo "=============================================================="
   read -e -p ": " OPERATION
   if [ "$OPERATION" -eq "$OPERATION" ] 2>/dev/null; then
     if [ $OPERATION -eq 1 ]; then
       finished=true
     elif [ $OPERATION -eq 2 ]; then
+      source installer/update_daemons.sh
+      exit
+    elif [ $OPERATION -eq 3 ]; then
+      source installer/update_webadmin.sh
+      exit
+    elif [ $OPERATION -eq 4 ]; then
       source installer/uninstall.sh
       exit
-    elif [  $OPERATION -eq 3 ]; then
+    elif [  $OPERATION -eq 5 ]; then
       echo "Bye."
       exit
     fi
@@ -142,3 +150,23 @@ echo "+----------------------------------------------------------+"
 echo "|                  INSTALLATION COMPLETED                  |"
 echo "|          Have fun and a lot of cracked hashes...         |"
 echo "+----------------------------------------------------------+"
+echo "| The default WebAdmin credentials are:                    |"
+echo "|  * user: fitcrack                                        |"
+echo "|  * password: FITCRACK                                    |"
+echo "+----------------------------------------------------------+"
+
+read -e -p "Do you with to START the Fitcrack server? [y/N] (default: y)" START_SERVER
+START_SERVER=${START_SERVER:-y}
+
+if [ $START_SERVER = "y" ]; then
+  MYDIR=$(pwd)
+  cd $BOINC_PROJECT_DIR
+  sudo -u $BOINC_USER ./bin/stop
+  sudo -u $BOINC_USER ./bin/start
+  cd $MYDIR
+else
+  echo "You can start the project later as $BOINC_USER by typing:"
+  echo " cd $BOINC_PROJECT_DIR"
+  echo " ./bin/start"
+fi
+echo " *** All done *** "

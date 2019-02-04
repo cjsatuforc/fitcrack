@@ -1,6 +1,18 @@
 # Fitcrack (Distributed password cracking system)
 
-## Software prerequisities
+This README describes how to install and run Fitcrack distributed password cracking system.
+There are four ways of deployment:
+
+* Using [Step-by-step guide for Debian 9 / Ubuntu 18.04 LTS][#instdeb]
+* Using [Step-by-step guide for CentOS/RHEL 7][#instcentos]
+* Using [General installation instructions][#instgen]
+* Manual install:
+  * For **server** see [server README](server/README.md)
+
+
+## General installation instructions {#instgen}
+
+### Software prerequisities
 * make (3.79+)
 * m4 (1.4+)
 * libtool (1.5+)
@@ -21,7 +33,7 @@
 * PHP5 with cli support and the GD and MySQL modules
 * OpenSSL (0.98+)
 
-## Installation
+### Installation
 Create a user for running BOINC server
 ```
 useradd -m -c "BOINC Administrator" boincadm  -s /bin/bash
@@ -38,29 +50,9 @@ As root, use Fitcrack installer:
 ```
 Or install everything manually (see README.md files for server, webadmin, and runner).
 
-## Running the server
 
-Login to the server as BOINC user (e.g. `boincadm`) and enter the project directory:
-```
-boincadm@myserver:~$ cd projects/fitcrack
-```
 
-### Get server status
-```
-boincadm@myserver:~/projects/fitcrack$ ./bin/status
-```
-
-### Start Fitcrack server
-```
-boincadm@myserver:~/projects/fitcrack$ ./bin/start
-```
-
-### Stop Fitcrack server
-```
-boincadm@myserver:~/projects/fitcrack$ ./bin/stop
-```
-
-## Step-by-step: Install on Debian 9 / Ubuntu 18.04 LTS
+## Step-by-step: Install on Debian 9 / Ubuntu 18.04 LTS  {#instdeb}
 
 Open a **root** terminal, go to the directory with Fitcrack sources and proceed as follows.
 
@@ -89,7 +81,7 @@ mysql> GRANT ALL PRIVILEGES ON fitcrack.* TO 'fitcrack'@'localhost' IDENTIFIED B
 ```
 
 
-## Step-by-step: Install on CentOS/RHEL 7
+## Step-by-step: Install on CentOS/RHEL 7  {#instcentos}
 
 Open a **root** terminal, go to the directory with Fitcrack sources and proceed as follows.
 
@@ -146,6 +138,37 @@ scl enable devtoolset-7 bash
 ./install_fitcrack.sh
 ```
 
+
+## Operating the server
+
+The **default** login credentials to the WebAdmin are:
+* login: ``fitcrack``
+* password: ``FITCRACK``
+
+At the end of the installation, the installer asks you if you wish to start
+the server daemons. If you decide not to, you can do that manually as described below:
+
+## Running the server
+
+Login to the server as BOINC user (e.g. `boincadm`) and enter the project directory:
+```
+boincadm@myserver:~$ cd projects/fitcrack
+```
+
+### Get server status
+```
+boincadm@myserver:~/projects/fitcrack$ ./bin/status
+```
+
+### Start Fitcrack server
+```
+boincadm@myserver:~/projects/fitcrack$ ./bin/start
+```
+
+### Stop Fitcrack server
+```
+boincadm@myserver:~/projects/fitcrack$ ./bin/stop
+```
 
 ## Optional: multiple workunits per hosts
 
