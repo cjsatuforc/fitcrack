@@ -3,14 +3,16 @@
 This README describes how to install and run Fitcrack distributed password cracking system.
 There are four ways of deployment:
 
-* Using [Step-by-step guide for Debian 9 / Ubuntu 18.04 LTS](#instdeb)
-* Using [Step-by-step guide for CentOS/RHEL 7](#instcentos)
+* Using [Step-by-step guide for Debian 9 / Ubuntu 18.04 LTS](#instdeb) (recommended way)
+* Using [Step-by-step guide for CentOS/RHEL 7](#instcentos) (recommended way)
 * Using [General installation instructions](#instgen)
 * Manual install:
-  * For **server** see [server README](server/README.md)
+  * For **BOINC and Fitcrack server**, see [server README](server/README.md)
+  * For **Fitcrack WebAdmin**, see [WebAdmin README](webadmin/README.md)
+  * For **Custom build of Runner**, see [Runner README](runner/README.md)
 
-
-## General installation instructions<a name="instgen"></a>
+<a name="instgen"></a>
+## General installation instructions
 
 ### Software prerequisities
 * make (3.79+)
@@ -51,8 +53,8 @@ As root, use Fitcrack installer:
 Or install everything manually (see README.md files for server, webadmin, and runner).
 
 
-
-## Step-by-step: Install on Debian 9 / Ubuntu 18.04 LTS<a name="instdeb"></a>
+<a name="instdeb"></a>
+## Step-by-step: Install on Debian 9 / Ubuntu 18.04 LTS
 
 Open a **root** terminal, go to the directory with Fitcrack sources and proceed as follows.
 
@@ -80,8 +82,8 @@ mysql> GRANT ALL PRIVILEGES ON fitcrack.* TO 'fitcrack'@'localhost' IDENTIFIED B
 ./install_fitcrack.sh
 ```
 
-
-## Step-by-step: Install on CentOS/RHEL 7<a name="instcentos"></a>
+<a name="instcentos"></a>
+## Step-by-step: Install on CentOS/RHEL 7
 
 Open a **root** terminal, go to the directory with Fitcrack sources and proceed as follows.
 
