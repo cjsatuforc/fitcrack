@@ -53,6 +53,7 @@ As root, use Fitcrack installer:
 ./install_fitcrack.sh
 ```
 And proceed according to your preferences...
+
 ![Installer](img/insta.png)
 
 <a name="instdeb"></a>
