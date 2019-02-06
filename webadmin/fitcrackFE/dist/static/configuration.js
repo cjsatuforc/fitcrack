@@ -3,7 +3,7 @@
    * Licence: MIT, see LICENSE
 */
 
-window.serverAddress = 'http://147.229.12.213:5000'
+window.serverAddress = 'http://localhost:5000'
 
 window.theme = {
   primary: '#ab2a4c',
